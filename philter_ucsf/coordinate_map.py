@@ -50,9 +50,8 @@ class CoordinateMap:
         self.coord2pattern[start].append(pattern)
 
     def add_extend(self, start, stop, pattern=""):
-        """  adds a new coordinate to the coordinate map
-			if overlaps with another, will extend to the larger size
-		"""
+        """adds a new coordinate to the coordinate map
+        if overlaps with another, will extend to the larger size"""
         overlaps = self.max_overlap(start, stop)
 
         def clear_overlaps(lst):
@@ -113,9 +112,7 @@ class CoordinateMap:
         return start, stop
 
     def filecoords(self):
-        """ 
-			generator does an inorder scan of the coordinates for this file
-		"""
+        """generator does an inorder scan of the coordinates for this file"""
         coords = sorted(self.map.keys())
         for coord in coords:
             yield coord, self.map[coord]
@@ -138,10 +135,9 @@ class CoordinateMap:
         return False
 
     def calc_overlap(self, start, stop):
-        """ given a set of coordinates, will calculate all overlaps 
-			perf: stop after we know we won't hit any more
-			perf: use binary search approach
-		"""
+        """ given a set of coordinates, will calculate all overlaps
+        perf: stop after we know we won't hit any more
+        perf: use binary search approach"""
 
         overlaps = []
         for s in self.map:
@@ -160,10 +156,9 @@ class CoordinateMap:
         return overlaps
 
     def max_overlap(self, start, stop):
-        """ given a set of coordinates, will calculate max of all overlaps 
-			perf: stop after we know we won't hit any more
-			perf: use binary search approach
-		"""
+        """ given a set of coordinates, will calculate max of all overlaps
+        perf: stop after we know we won't hit any more
+        perf: use binary search approach"""
 
         overlaps = []
         for s in self.map:

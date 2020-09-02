@@ -23,7 +23,7 @@ annotation.py returns a list of lists containing all words in the clinical note 
 
 phi-reducer.py returns a txt file (phi-reduced.txt) in which words that are phi have 'hopefully' been replaced with the safe word: **PHI**
 
-eval.py
+evaluate.py
 1. extracts all words from the annotation.py list for which the phi-category is 0 (not-phi) and adds them to a list (annot_list)
     - annot_list contains the True Negatives
 2. extracts all non-**PHI** words from phi-reduced.txt and adds them to a list (phi_r_list)

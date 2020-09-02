@@ -3,7 +3,7 @@ import distutils.util
 import os
 import re
 
-from philter_ucsf.philter import Philter
+from philter_ucsf import evaluate, philter
 
 
 def main():
@@ -156,26 +156,35 @@ def main():
     if verbose:
         print("RUNNING ", philter_config["filters"])
 
-    filterer = Philter(philter_config)
+    filters = philter.build_filters(philter_config["filters"])
+
+    stanford_ner = None
+    if len([x for x in filters if x.type == "stanford_ner"]):
+        stanford_ner = philter.build_ner_tagger(
+            philter_config["stanford_ner_tagger"]["classifier"],
+            philter_config["stanford_ner_tagger"]["stanford_ner_tagger"],
+        )
 
     for root, dirs, files in os.walk(philter_config["finpath"]):
         for file in files:
             with open(os.path.join(root, file)) as inf:
-                entry, include_map, data_tracker = filterer.map_coordinates(inf.read())
+                entry, include_map, exclude_map, data_tracker = philter.map_coordinates(
+                    inf.read(), patterns=filters
+                )
                 if philter_config["outformat"] == "i2b2":
                     with open(
                         os.path.join(philter_config["foutpath"], f"{file}.txt"), "w"
                     ) as fout:
-                        fout.write(filterer.transform_text_i2b2(data_tracker))
+                        fout.write(philter.transform_text_i2b2(data_tracker))
                 elif philter_config["outformat"] == "asterisk":
                     with open(
                         os.path.join(philter_config["foutpath"], f"{file}.txt"), "w"
                     ) as fout:
-                        fout.write(filterer.transform_text_asterisk(entry, include_map))
+                        fout.write(philter.transform_text_asterisk(entry, include_map))
 
     # evaluate the effectiveness
     if run_eval and args.outputformat == "asterisk":
-        filterer.eval(
+        evaluate.eval(
             in_path=args.output,
             anno_path=args.anno,
             anno_suffix=".txt",
