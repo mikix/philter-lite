@@ -24,6 +24,6 @@ setuptools.setup(
         "nltk~=3.5",
         "numpy~=1.19",
         "pandas~=1.0",
-        "xmltodict~=0.12"
-    ]
+        "xmltodict~=0.12",
+    ],
 )
