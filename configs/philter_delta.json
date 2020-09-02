@@ -894,42 +894,42 @@
         "type": "regex",
         "exclude": false,
         "filepath": "filters/regex/safe/ordering_md_safe.txt",
-        "note": ""
+        "notes": ""
     }, 
     {
         "title": "order md safe",
         "type": "regex",
         "exclude": false,
         "filepath": "filters/regex/safe/order_md_safe.txt",
-        "note": ""
+        "notes": ""
     },
     {
         "title": "peak safe",
         "type": "regex",
         "exclude": false,
         "filepath": "filters/regex/safe/prn_safe.txt",
-        "note": ""
+        "notes": ""
     },  
     {
         "title": "prn safe",
         "type": "regex",
         "exclude": false,
         "filepath": "filters/regex/safe/peak_safe.txt",
-        "note": ""
+        "notes": ""
     },  
     {
         "title": "reviewed by safe",
         "type": "regex",
         "exclude": false,
         "filepath": "filters/regex/safe/reviewed_by_safe.txt",
-        "note": ""
+        "notes": ""
     }, 
     {
         "title": "smoking safe",
         "type": "regex",
         "exclude": false,
         "filepath": "filters/regex/safe/smoking_safe.txt",
-        "note": ""
+        "notes": ""
     },     
     {
         "title":"full street address",
@@ -1901,273 +1901,273 @@
         "type": "regex",
         "exclude": true,
         "filepath": "filters/regex/age/lived_to_x.txt",
-        "note": ""
+        "notes": ""
     },
     {
         "title": "x years old",
         "type": "regex",
         "exclude": true,
         "filepath": "filters/regex/age/x_years_old.txt",
-        "note": ""
+        "notes": ""
     },
     {
         "title": "x year old",
         "type": "regex",
         "exclude": true,
         "filepath": "filters/regex/age/x_year_old.txt",
-        "note": ""
+        "notes": ""
     },
     {
         "title": "age x",
         "type": "regex",
         "exclude": true,
         "filepath": "filters/regex/age/age_x.txt",
-        "note": ""
+        "notes": ""
     },
     {
         "title": "x yo",
         "type": "regex",
         "exclude": true,
         "filepath": "filters/regex/age/x_yo.txt",
-        "note": ""
+        "notes": ""
     },
       {
         "title": "confirmed by name",
         "type": "regex",
         "exclude": true,
         "filepath": "filters/regex/salutations/confirmed_by_name.txt",
-        "note": ""
+        "notes": ""
     },  
       {
         "title": "editor name",
         "type": "regex",
         "exclude": true,
         "filepath": "filters/regex/salutations/editor_name.txt",
-        "note": ""
+        "notes": ""
     }, 
       {
         "title": "code status name",
         "type": "regex",
         "exclude": true,
         "filepath": "filters/regex/salutations/code_status_name.txt",
-        "note": ""
+        "notes": ""
     },  
   {
         "title": "attending",
         "type": "regex",
         "exclude": true,
         "filepath": "filters/regex/salutations/attending.txt",
-        "note": ""
+        "notes": ""
     },
     {
         "title": "u_#_patient",
         "type": "regex",
         "exclude": true,
         "filepath": "filters/regex/salutations/u_#_patient.txt",
-        "note": ""
+        "notes": ""
     },
     {
         "title": "patient mrn",
         "type": "regex",
         "exclude": true,
         "filepath": "filters/regex/salutations/patient_mrn.txt",
-        "note": ""
+        "notes": ""
     },
     {
         "title": "name_age",
         "type": "regex",
         "exclude": true,
         "filepath": "filters/regex/salutations/name_age.txt",
-        "note": ""
+        "notes": ""
     },
     {
         "title": "patient/provider",
         "type": "regex",
         "exclude": true,
         "filepath": "filters/regex/salutations/patient_provider.txt",
-        "note": ""
+        "notes": ""
     },
     {
         "title": "patient summary",
         "type": "regex",
         "exclude": true,
         "filepath": "filters/regex/salutations/patient_summary.txt",
-        "note": ""
+        "notes": ""
     },
     {
         "title": "wrote",
         "type": "regex",
         "exclude": true,
         "filepath": "filters/regex/salutations/wrote.txt",
-        "note": ""
+        "notes": ""
     },     
     {
         "title": "salutations1",
         "type": "regex",
         "exclude": true,
         "filepath": "filters/regex/salutations/pre_salutations_2chars.txt",
-        "note": ""
+        "notes": ""
     },
     {
         "title": "salutations2",
         "type": "regex",
         "exclude": true,
         "filepath": "filters/regex/salutations/pre_salutations_3chars.txt",
-        "note": ""
+        "notes": ""
     },
     {
         "title": "salutations3",
         "type": "regex",
         "exclude": true,
         "filepath": "filters/regex/salutations/pre_salutations_4chars.txt",
-        "note": ""
+        "notes": ""
     },
     {
         "title": "salutations4",
         "type": "regex",
         "exclude": true,
         "filepath": "filters/regex/salutations/pre_salutations_5chars.txt",
-        "note": ""
+        "notes": ""
     },
     {
         "title": "Md PhD",
         "type": "regex",
         "exclude": true,
         "filepath": "filters/regex/salutations/md_phd.txt",
-        "note": ""
+        "notes": ""
     },
     {
         "title": "salutations5",
         "type": "regex",
         "exclude": true,
         "filepath": "filters/regex/salutations/post_salutations_2chars.txt",
-        "note": ""
+        "notes": ""
     },
     {
         "title": "salutations6",
         "type": "regex",
         "exclude": true,
         "filepath": "filters/regex/salutations/post_salutations_3chars.txt",
-        "note": ""
+        "notes": ""
     },
     {
         "title": "salutations7",
         "type": "regex",
         "exclude": true,
         "filepath": "filters/regex/salutations/post_salutations_4chars.txt",
-        "note": ""
+        "notes": ""
     },
     {
         "title": "names patterns",
         "type": "regex",
         "exclude": true,
         "filepath": "filters/regex/salutations/name_patterns.txt",
-        "note": ""
+        "notes": ""
     },
     {
         "title": "ordering md",
         "type": "regex",
         "exclude": true,
         "filepath": "filters/regex/salutations/ordering_md.txt",
-        "note": ""
+        "notes": ""
     },
        {
         "title": "name indicator",
         "type": "regex",
         "exclude": true,
         "filepath": "filters/regex/salutations/name_indicator.txt",
-        "note": ""
+        "notes": ""
     },
     {
         "title": "relative indicator",
         "type": "regex",
         "exclude": true,
         "filepath": "filters/regex/salutations/relative_indicator.txt",
-        "note": ""
+        "notes": ""
     },
      {
         "title": "dr ambiguous",
         "type": "regex",
         "exclude": true,
         "filepath": "filters/regex/salutations/dr_ambiguous.txt",
-        "note": ""
+        "notes": ""
     },
      {
         "title": "dash doctor",
         "type": "regex",
         "exclude": true,
         "filepath": "filters/regex/salutations/dash_doctor.txt",
-        "note": "________doctor name"
+        "notes": "________doctor name"
     },
      {
         "title": "patient present",
         "type": "regex",
         "exclude": true,
         "filepath": "filters/regex/salutations/patient_present.txt",
-        "note": ""
+        "notes": ""
     },
      {
         "title": "patient measurements",
         "type": "regex",
         "exclude": true,
         "filepath": "filters/regex/salutations/patient_measurements.txt",
-        "note": ""
+        "notes": ""
     },
      {
         "title": "patholigist",
         "type": "regex",
         "exclude": true,
         "filepath": "filters/regex/salutations/pathologist.txt",
-        "note": ""
+        "notes": ""
     },
      {
         "title": "email header",
         "type": "regex",
         "exclude": true,
         "filepath": "filters/regex/salutations/email_header.txt",
-        "note": ""
+        "notes": ""
     },
        {
         "title": "by doctor number",
         "type": "regex",
         "exclude": true,
         "filepath": "filters/regex/salutations/by_doctor_number.txt",
-        "note": ""
+        "notes": ""
     },
        {
         "title": "sent note to",
         "type": "regex",
         "exclude": true,
         "filepath": "filters/regex/salutations/sent_note_to.txt",
-        "note": ""
+        "notes": ""
     },
        {
         "title": "sincerely",
         "type": "regex",
         "exclude": true,
         "filepath": "filters/regex/salutations/sincerely.txt",
-        "note": ""
+        "notes": ""
     },
        {
         "title": "ucsf SF",
         "type": "regex",
         "exclude": true,
         "filepath": "filters/regex/ucsf_regex/ucsf_sf.txt",
-        "note": ""
+        "notes": ""
     },
     {
         "title": "ucsf bay area",
         "type": "regex",
         "exclude": true,
         "filepath": "filters/regex/ucsf_regex/ucsf_bay_area.txt",
-        "note": ""
+        "notes": ""
     },
     {
         "title": "ucsf neighborhoods",
         "type": "regex",
         "exclude": true,
         "filepath": "filters/regex/ucsf_regex/ucsf_neighborhoods.txt",
-        "note": ""
+        "notes": ""
     },
     {
         "title":"month_name",

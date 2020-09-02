@@ -1,15 +1,35 @@
 {
-    "total_false_positives": 36,
-    "total_false_negatives": 3,
-    "total_true_positives": 93,
-    "total_true_negatives": 1702,
+    "total_false_positives": 31,
+    "total_false_negatives": 2,
+    "total_true_positives": 94,
+    "total_true_negatives": 1733,
     "false_positives": [],
     "true_positives": [],
     "false_negatives": [],
     "true_negatives": [],
     "summary_by_file": {
-        "./data/i2b2_results/111-01.txt": {
+        "./data/i2b2_results/110-04.txt.txt": {
             "false_positives": [
+                "Sternal",
+                "5",
+                "750",
+                "Mailing",
+                "135",
+                "60",
+                "132",
+                "60",
+                "L",
+                "Abdomen",
+                "Soft",
+                "ND",
+                "Sternal"
+            ],
+            "false_negatives": [],
+            "num_false_negatives": 0
+        },
+        "./data/i2b2_results/111-01.txt.txt": {
+            "false_positives": [
+                "EMERGENCY",
                 "This",
                 "on"
             ],
@@ -18,66 +38,40 @@
             ],
             "num_false_negatives": 1
         },
-        "./data/i2b2_results/110-04.txt": {
+        "./data/i2b2_results/110-03.txt.txt": {
             "false_positives": [
-                "Sternal",
-                "crunching",
-                "TUNNEL",
-                "7.5",
-                "750",
-                "Mailing",
-                "thicker",
-                "wiht",
-                "S4.",
-                "Abdomen",
-                "Soft",
-                "ND",
-                "IVCD",
-                "narrower.",
-                "Sternal"
-            ],
-            "false_negatives": [],
-            "num_false_negatives": 0
-        },
-        "./data/i2b2_results/110-03.txt": {
-            "false_positives": [
-                "SDU",
                 "JAR",
-                "DOA",
+                "MR",
                 "PCP",
                 "2",
                 "2",
                 "Smokes",
-                "paresthesias.",
                 "EX",
-                "escalating",
-                "inferiolateral",
-                "inferiolateral",
                 "Pump",
                 "DM",
-                "RISS",
-                "Prophy",
-                "EHMS"
+                "RISS"
             ],
             "false_negatives": [],
             "num_false_negatives": 0
         },
-        "./data/i2b2_results/110-02.txt": {
-            "false_positives": [],
+        "./data/i2b2_results/110-02.txt.txt": {
+            "false_positives": [
+                "142",
+                "74",
+                "Will",
+                "Will"
+            ],
             "false_negatives": [
                 "church"
             ],
             "num_false_negatives": 1
         },
-        "./data/i2b2_results/110-01.txt": {
+        "./data/i2b2_results/110-01.txt.txt": {
             "false_positives": [
-                "New",
-                "XGT"
+                "Will"
             ],
-            "false_negatives": [
-                "holmes"
-            ],
-            "num_false_negatives": 1
+            "false_negatives": [],
+            "num_false_negatives": 0
         }
     }
 }

@@ -1,10 +1,8 @@
 import argparse
 import distutils.util
-import re 
-import pickle
-from philter import Philter
-import gzip
-import json
+import re
+from philter_ucsf.philter import Philter
+import os
 
 
 def main():
@@ -12,10 +10,12 @@ def main():
     help_str = """ Philter -- PHI filter for clinical notes """
     ap = argparse.ArgumentParser(description=help_str)
     ap.add_argument("-i", "--input", default="./data/i2b2_notes/",
-                    help="Path to the directory or the file that contains the PHI note, the default is ./data/i2b2_notes/",
+                    help="Path to the directory or the file that contains the PHI note, the default is "
+                         "./data/i2b2_notes/",
                     type=str)
     ap.add_argument("-a", "--anno", default="./data/i2b2_anno/",
-                    help="Path to the directory or the file that contains the PHI annotation, the default is ./data/i2b2_anno/",
+                    help="Path to the directory or the file that contains the PHI annotation, the default is "
+                         "./data/i2b2_anno/",
                     type=str)
     ap.add_argument("-o", "--output", default="./data/i2b2_results/",
                     help="Path to the directory to save the PHI-reduced notes in, the default is ./data/i2b2_results/",
@@ -34,27 +34,31 @@ def main():
                     type=str)
     ap.add_argument("-v", "--verbose", default=True,
                     help="When verbose is true, will emit messages about script progress",
-                    type=lambda x:bool(distutils.util.strtobool(x)))
+                    type=lambda x: bool(distutils.util.strtobool(x)))
     ap.add_argument("-e", "--run_eval", default=True,
                     help="When run_eval is true, will run our eval script and emit summarized results to terminal",
-                    type=lambda x:bool(distutils.util.strtobool(x)))
+                    type=lambda x: bool(distutils.util.strtobool(x)))
     ap.add_argument("-t", "--freq_table", default=False,
-                    help="When freqtable is true, will output a unigram/bigram frequency table of all note words and their PHI/non-PHI counts",
-                    type=lambda x:bool(distutils.util.strtobool(x))) 
+                    help="When freqtable is true, will output a unigram/bigram frequency table of all note words and "
+                         "their PHI/non-PHI counts",
+                    type=lambda x: bool(distutils.util.strtobool(x)))
     ap.add_argument("-n", "--initials", default=True,
                     help="When initials is true, will include initials PHI in recall/precision calculations",
-                    type=lambda x:bool(distutils.util.strtobool(x))) 
+                    type=lambda x: bool(distutils.util.strtobool(x)))
     ap.add_argument("--outputformat", default="i2b2",
-                    help="Define format of annotation, allowed values are \"asterisk\", \"i2b2\". Default is \"asterisk\"",
+                    help="Define format of annotation, allowed values are \"asterisk\", \"i2b2\". Default "
+                         "is \"asterisk\"",
                     type=str)
     ap.add_argument("--ucsfformat", default=False,
                     help="When ucsfformat is true, will adjust eval script for slightly different xml format",
-                    type=lambda x:bool(distutils.util.strtobool(x)))
+                    type=lambda x: bool(distutils.util.strtobool(x)))
     ap.add_argument("--prod", default=False,
-                    help="When prod is true, this will run the script with output in i2b2 xml format without running the eval script",
-                    type=lambda x:bool(distutils.util.strtobool(x)))
+                    help="When prod is true, this will run the script with output in i2b2 xml format without running "
+                         "the eval script",
+                    type=lambda x: bool(distutils.util.strtobool(x)))
     ap.add_argument("--cachepos", default=None,
-                    help="Path to a directoy to store/load the pos data for all notes. If no path is specified then memory caching will be used.",
+                    help="Path to a directoy to store/load the pos data for all notes. If no path is specified then "
+                         "memory caching will be used.",
                     type=str)
 
     args = ap.parse_args()
@@ -66,64 +70,60 @@ def main():
         verbose = False
 
         philter_config = {
-            "verbose":verbose,
-            "run_eval":run_eval,
-            "finpath":args.input,
-            "foutpath":args.output,
-            "outformat":args.outputformat,
-            "filters":args.filters,
-            "cachepos":args.cachepos
+            "verbose": verbose,
+            "run_eval": run_eval,
+            "finpath": args.input,
+            "foutpath": args.output,
+            "outformat": args.outputformat,
+            "filters": args.filters,
+            "cachepos": args.cachepos
         }
 
     else:
         philter_config = {
-            "verbose":args.verbose,
-            "run_eval":args.run_eval,
-            "freq_table":args.freq_table,
-            "initials":args.initials,
-            "finpath":args.input,
-            "foutpath":args.output,
-            "outformat":args.outputformat,
-            "ucsfformat":args.ucsfformat,
-            "anno_folder":args.anno,
-            "filters":args.filters,
-            "xml":args.xml,
-            "coords":args.coords,
-            "eval_out":args.eval_output,
-            "cachepos":args.cachepos
+            "verbose": args.verbose,
+            "run_eval": args.run_eval,
+            "freq_table": args.freq_table,
+            "initials": args.initials,
+            "finpath": args.input,
+            "foutpath": args.output,
+            "outformat": args.outputformat,
+            "ucsfformat": args.ucsfformat,
+            "anno_folder": args.anno,
+            "filters": args.filters,
+            "xml": args.xml,
+            "coords": args.coords,
+            "eval_out": args.eval_output,
+            "cachepos": args.cachepos
         }
    
     if verbose:
         print("RUNNING ", philter_config['filters'])
 
-
     filterer = Philter(philter_config)
 
-    #map any sets, pos and regex groups we have in our config
-    filterer.map_coordinates()
+    for root, dirs, files in os.walk(philter_config["finpath"]):
+        for file in files:
+            with open(os.path.join(root, file)) as inf:
+                entry, include_map, data_tracker = filterer.map_coordinates(inf.read())
+                if philter_config["outformat"] == "i2b2":
+                    with open(os.path.join(philter_config["foutpath"], f"{file}.txt"), "w") as fout:
+                        fout.write(filterer.transform_text_i2b2(data_tracker))
+                elif philter_config["outformat"] == "asterisk":
+                    with open(os.path.join(philter_config["foutpath"], f"{file}.txt"), "w") as fout:
+                        fout.write(filterer.transform_text_asterisk(entry, include_map))
 
-    
-    #transform the data 
-    #Priority order is maintained in the pattern list
-    filterer.transform()
-
-    #evaluate the effectiveness
+    # evaluate the effectiveness
     if run_eval and args.outputformat == "asterisk":
         filterer.eval(
-            philter_config,
             in_path=args.output,
             anno_path=args.anno,
             anno_suffix=".txt",
-            fn_output = "data/phi/fn.txt",
-            fp_output = "data/phi/fp.txt",
+            fn_output="data/phi/fn.txt",
+            fp_output="data/phi/fp.txt",
             summary_output="./data/phi/summary.json",
-            phi_matcher=re.compile("\*+"),
-            pre_process=r":|\,|\-|\/|_|~", #characters we're going to strip from our notes to analyze against anno
-            only_digits=False,
-            pre_process2= r"[^a-zA-Z0-9]",
             punctuation_matcher=re.compile(r"[^a-zA-Z0-9\*]"))
 
-# error analysis
-        
+
 if __name__ == "__main__":
     main()
