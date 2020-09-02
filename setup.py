@@ -19,6 +19,11 @@ setuptools.setup(
         "License :: OSI Approved :: BSD License",
         "Operating System :: OS Independent",
     ],
+    entry_points={
+        'console_scripts': [
+            'philter = philter_ucsf.main:main',
+        ],
+    },
     install_requires=[
         "chardet~=3.0",
         "nltk~=3.5",
