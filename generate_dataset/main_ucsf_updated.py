@@ -4,7 +4,7 @@ import os
 import re
 import xml.etree.ElementTree as ET
 
-from philter_ucsf.coordinate_map import CoordinateMap
+from philter_lite.coordinate_map import CoordinateMap
 
 
 def isolate_phi(xml_folder):

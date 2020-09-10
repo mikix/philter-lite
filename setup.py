@@ -4,8 +4,8 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="philter_ucsf",
-    version="1.0.0",
+    name="philter-lite",
+    version="2.0.0",
     author="Beau Norgeot",
     author_email="beaunorgeot@gmail.com",
     description="An open-source PHI-filtering software",
@@ -21,14 +21,12 @@ setuptools.setup(
     ],
     entry_points={
         'console_scripts': [
-            'philter = philter_ucsf.main:main',
+            'philter_lite = philter_lite.main:main',
         ],
     },
     install_requires=[
         "chardet~=3.0",
         "nltk~=3.5",
-        "numpy~=1.19",
-        "pandas~=1.0",
         "xmltodict~=0.12",
     ],
 )

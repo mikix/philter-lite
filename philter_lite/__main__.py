@@ -1,9 +1,11 @@
 import argparse
 import distutils.util
-import os
+import gzip
+import json
+import pickle
 import re
 
-from philter_ucsf import evaluate, philter
+from philter_lite.philter import Philter
 
 
 def main():
@@ -14,16 +16,14 @@ def main():
         "-i",
         "--input",
         default="./data/i2b2_notes/",
-        help="Path to the directory or the file that contains the PHI note, the default is "
-        "./data/i2b2_notes/",
+        help="Path to the directory or the file that contains the PHI note, the default is ./data/i2b2_notes/",
         type=str,
     )
     ap.add_argument(
         "-a",
         "--anno",
         default="./data/i2b2_anno/",
-        help="Path to the directory or the file that contains the PHI annotation, the default is "
-        "./data/i2b2_anno/",
+        help="Path to the directory or the file that contains the PHI annotation, the default is ./data/i2b2_anno/",
         type=str,
     )
     ap.add_argument(
@@ -78,8 +78,7 @@ def main():
         "-t",
         "--freq_table",
         default=False,
-        help="When freqtable is true, will output a unigram/bigram frequency table of all note words and "
-        "their PHI/non-PHI counts",
+        help="When freqtable is true, will output a unigram/bigram frequency table of all note words and their PHI/non-PHI counts",
         type=lambda x: bool(distutils.util.strtobool(x)),
     )
     ap.add_argument(
@@ -90,10 +89,15 @@ def main():
         type=lambda x: bool(distutils.util.strtobool(x)),
     )
     ap.add_argument(
+        "--stanfordner",
+        default="/usr/local/stanford-ner/",
+        help="Path to Stanford NER, the default is /usr/local/stanford-ner/",
+        type=str,
+    )
+    ap.add_argument(
         "--outputformat",
-        default="i2b2",
-        help='Define format of annotation, allowed values are "asterisk", "i2b2". Default '
-        'is "asterisk"',
+        default="asterisk",
+        help='Define format of annotation, allowed values are "asterisk", "i2b2". Default is "asterisk"',
         type=str,
     )
     ap.add_argument(
@@ -105,15 +109,13 @@ def main():
     ap.add_argument(
         "--prod",
         default=False,
-        help="When prod is true, this will run the script with output in i2b2 xml format without running "
-        "the eval script",
+        help="When prod is true, this will run the script with output in i2b2 xml format without running the eval script",
         type=lambda x: bool(distutils.util.strtobool(x)),
     )
     ap.add_argument(
         "--cachepos",
         default=None,
-        help="Path to a directoy to store/load the pos data for all notes. If no path is specified then "
-        "memory caching will be used.",
+        help="Path to a directoy to store/load the pos data for all notes. If no path is specified then memory caching will be used.",
         type=str,
     )
 
@@ -124,13 +126,14 @@ def main():
     if args.prod:
         run_eval = False
         verbose = False
-
+        outputformat = "i2b2"
+        # filters = "./configs/philter_alpha.json"
         philter_config = {
             "verbose": verbose,
             "run_eval": run_eval,
             "finpath": args.input,
             "foutpath": args.output,
-            "outformat": args.outputformat,
+            "outformat": outputformat,
             "filters": args.filters,
             "cachepos": args.cachepos,
         }
@@ -151,49 +154,45 @@ def main():
             "coords": args.coords,
             "eval_out": args.eval_output,
             "cachepos": args.cachepos,
+            "stanford_ner_tagger": {
+                "classifier": args.stanfordner
+                + "classifiers/english.all.3class.distsim.crf.ser.gz",
+                "jar": args.stanfordner + "stanford-ner.jar",
+                "download": True,
+            },
         }
 
     if verbose:
         print("RUNNING ", philter_config["filters"])
 
-    filters = philter.build_filters(philter_config["filters"])
+    filterer = Philter(philter_config)
 
-    stanford_ner = None
-    if len([x for x in filters if x.type == "stanford_ner"]):
-        stanford_ner = philter.build_ner_tagger(
-            philter_config["stanford_ner_tagger"]["classifier"],
-            philter_config["stanford_ner_tagger"]["stanford_ner_tagger"],
-        )
+    # map any sets, pos and regex groups we have in our config
+    filterer.map_coordinates()
 
-    for root, dirs, files in os.walk(philter_config["finpath"]):
-        for file in files:
-            with open(os.path.join(root, file)) as inf:
-                entry, include_map, exclude_map, data_tracker = philter.map_coordinates(
-                    inf.read(), patterns=filters
-                )
-                if philter_config["outformat"] == "i2b2":
-                    with open(
-                        os.path.join(philter_config["foutpath"], f"{file}.txt"), "w"
-                    ) as fout:
-                        fout.write(philter.transform_text_i2b2(data_tracker))
-                elif philter_config["outformat"] == "asterisk":
-                    with open(
-                        os.path.join(philter_config["foutpath"], f"{file}.txt"), "w"
-                    ) as fout:
-                        fout.write(philter.transform_text_asterisk(entry, include_map))
+    # transform the data
+    # Priority order is maintained in the pattern list
+    filterer.transform()
 
     # evaluate the effectiveness
     if run_eval and args.outputformat == "asterisk":
-        evaluate.eval(
+        filterer.eval(
+            philter_config,
             in_path=args.output,
             anno_path=args.anno,
             anno_suffix=".txt",
             fn_output="data/phi/fn.txt",
             fp_output="data/phi/fp.txt",
             summary_output="./data/phi/summary.json",
+            phi_matcher=re.compile("\*+"),
+            pre_process=r":|\,|\-|\/|_|~",  # characters we're going to strip from our notes to analyze against anno
+            only_digits=False,
+            pre_process2=r"[^a-zA-Z0-9]",
             punctuation_matcher=re.compile(r"[^a-zA-Z0-9\*]"),
         )
 
+
+# error analysis
 
 if __name__ == "__main__":
     main()

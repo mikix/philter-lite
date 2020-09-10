@@ -6,14 +6,15 @@ import subprocess
 import warnings
 from dataclasses import dataclass
 from typing import Dict, List, Optional, Pattern
+import pkg_resources
 
 import nltk
 from chardet.universaldetector import UniversalDetector
 from nltk.tag.stanford import StanfordNERTagger
 
-from philter_ucsf.coordinate_map import CoordinateMap
+from philter_lite.coordinate_map import CoordinateMap
 
-PHI_TYPE_LIST = [
+DEFAULT_PHI_TYPE_LIST = [
     "DATE",
     "Patient_Social_Security_Number",
     "Email",
@@ -135,11 +136,13 @@ def filter_from_dict(filter_dict):
 
     filter_type = filter_dict["type"]
 
+    resource_package = __name__
+
     if filter_type not in known_pattern_types:
         raise Exception("Pattern type is unknown", filter_type)
 
     if filter_type == "set":
-        filter_path = filter_dict["filepath"]
+        filter_path = pkg_resources.resource_filename(resource_package, filter_dict["filepath"])
         if not os.path.exists(filter_path):
             raise Exception("Config filepath does not exist", filter_path)
         if filter_path.split(".")[-1] not in set_filetypes:
@@ -158,7 +161,8 @@ def filter_from_dict(filter_dict):
             phi_type=filter_dict.get("phi_type", None),
         )
     elif filter_type == "regex":
-        filter_path = filter_dict["filepath"]
+        filter_path = pkg_resources.resource_filename(resource_package, filter_dict["filepath"])
+
         if not os.path.exists(filter_path):
             raise Exception("Config filepath does not exist", filter_path)
         if filter_path.split(".")[-1] not in regex_filetypes:
@@ -177,7 +181,7 @@ def filter_from_dict(filter_dict):
         )
 
     elif filter_type == "regex_context":
-        filter_path = filter_dict["filepath"]
+        filter_path = pkg_resources.resource_filename(resource_package, filter_dict["filepath"])
         if not os.path.exists(filter_path):
             raise Exception("Config filepath does not exist", filter_path)
         if filter_path.split(".")[-1] not in regex_filetypes:
@@ -263,7 +267,7 @@ def get_clean(text, pre_process=r"[^a-zA-Z0-9]"):
     return cleaned
 
 
-def map_coordinates(text_data: str, patterns: List[Filter]):
+def map_coordinates(text_data: str, patterns: List[Filter], phi_type_list: List[str] = DEFAULT_PHI_TYPE_LIST):
     """ Runs the set, or regex on the input data
         generating a coordinate map of hits given
         (this performs a dry run on the data and doesn't transform)
@@ -284,7 +288,7 @@ def map_coordinates(text_data: str, patterns: List[Filter]):
 
     # add file to phi_type_dict
     phi_type_dict = {}
-    for phi_type in PHI_TYPE_LIST:
+    for phi_type in phi_type_list:
         phi_type_dict[phi_type] = CoordinateMap()
 
     # Create inital self.exclude/include for file
@@ -326,7 +330,7 @@ def map_coordinates(text_data: str, patterns: List[Filter]):
     # coordinates)
     full_exclude_map = include_map.get_complement(text_data)
 
-    for phi_type in PHI_TYPE_LIST:
+    for phi_type in phi_type_list:
         for start, stop in phi_type_dict[phi_type].filecoords():
             data_tracker.phi.append(
                 PhiEntry(
