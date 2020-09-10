@@ -1,8 +1,6 @@
 import itertools
 import re
 
-import numpy
-
 
 class CoordinateMap:
     """ 

@@ -2,14 +2,10 @@ import argparse
 import sys
 import xml.etree.ElementTree as ET
 
-import pandas
-
 sys.path
 sys.path.append("/usr/local/lib/python2.7/site-packages/")
 import os
-import re
 
-import pandas as pd
 import xmltodict
 
 # This script removes PHI tags that are not PHI (according to HIPAA) from i2b2 annotations
@@ -185,11 +181,6 @@ def main():
         os.makedirs(output_dir)
     except OSError:
         print("Output directory already exists.")
-
-    cols = ["Document", "PHI_element", "Text", "Type", "Comment"]
-    output_df = pd.DataFrame(columns=cols, index=None)
-
-    new_dict = dict()
 
     for filename in os.listdir(input_dir):
         print("\nCurating: " + filename)
