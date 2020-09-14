@@ -6,9 +6,9 @@ import subprocess
 import warnings
 from dataclasses import dataclass
 from typing import Dict, List, Optional, Pattern
-import pkg_resources
 
 import nltk
+import pkg_resources
 from chardet.universaldetector import UniversalDetector
 from nltk.tag.stanford import StanfordNERTagger
 
@@ -142,7 +142,9 @@ def filter_from_dict(filter_dict):
         raise Exception("Pattern type is unknown", filter_type)
 
     if filter_type == "set":
-        filter_path = pkg_resources.resource_filename(resource_package, filter_dict["filepath"])
+        filter_path = pkg_resources.resource_filename(
+            resource_package, filter_dict["filepath"]
+        )
         if not os.path.exists(filter_path):
             raise Exception("Config filepath does not exist", filter_path)
         if filter_path.split(".")[-1] not in set_filetypes:
@@ -161,7 +163,9 @@ def filter_from_dict(filter_dict):
             phi_type=filter_dict.get("phi_type", None),
         )
     elif filter_type == "regex":
-        filter_path = pkg_resources.resource_filename(resource_package, filter_dict["filepath"])
+        filter_path = pkg_resources.resource_filename(
+            resource_package, filter_dict["filepath"]
+        )
 
         if not os.path.exists(filter_path):
             raise Exception("Config filepath does not exist", filter_path)
@@ -181,7 +185,9 @@ def filter_from_dict(filter_dict):
         )
 
     elif filter_type == "regex_context":
-        filter_path = pkg_resources.resource_filename(resource_package, filter_dict["filepath"])
+        filter_path = pkg_resources.resource_filename(
+            resource_package, filter_dict["filepath"]
+        )
         if not os.path.exists(filter_path):
             raise Exception("Config filepath does not exist", filter_path)
         if filter_path.split(".")[-1] not in regex_filetypes:
@@ -267,7 +273,11 @@ def get_clean(text, pre_process=r"[^a-zA-Z0-9]"):
     return cleaned
 
 
-def map_coordinates(text_data: str, patterns: List[Filter], phi_type_list: List[str] = DEFAULT_PHI_TYPE_LIST):
+def map_coordinates(
+    text_data: str,
+    patterns: List[Filter],
+    phi_type_list: List[str] = DEFAULT_PHI_TYPE_LIST,
+):
     """ Runs the set, or regex on the input data
         generating a coordinate map of hits given
         (this performs a dry run on the data and doesn't transform)

@@ -19,14 +19,6 @@ setuptools.setup(
         "License :: OSI Approved :: BSD License",
         "Operating System :: OS Independent",
     ],
-    entry_points={
-        'console_scripts': [
-            'philter_lite = philter_lite.main:main',
-        ],
-    },
-    install_requires=[
-        "chardet~=3.0",
-        "nltk~=3.5",
-        "xmltodict~=0.12",
-    ],
+    entry_points={"console_scripts": ["philter_lite = philter_lite.main:main",],},
+    install_requires=["chardet~=3.0", "nltk~=3.5", "xmltodict~=0.12",],
 )
