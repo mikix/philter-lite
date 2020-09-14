@@ -1,5 +1,4 @@
 # UCSF Philter Lite
-
 `philter_lite` is a fork of the wonderful work done here: https://github.com/BCHSI/philter-ucsf
 
 The fork aims to tailor the functionality to more of a production-level setup.  This includes:
