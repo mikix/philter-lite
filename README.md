@@ -1,4 +1,7 @@
 # UCSF Philter Lite
+![Python Package](https://github.com/TimOrme/philter-ucsf/workflows/Python%20package/badge.svg)
+![PyPI](https://badge.fury.io/py/philter-lite.svg)
+
 `philter_lite` is a fork of the wonderful work done here: https://github.com/BCHSI/philter-ucsf
 
 The fork aims to tailor the functionality to more of a production-level setup.  This includes:
