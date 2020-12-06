@@ -1,6 +1,5 @@
 import json
 import os
-import pickle
 import re
 import subprocess
 import warnings
@@ -8,11 +7,11 @@ from dataclasses import dataclass
 from typing import Dict, List, Optional, Pattern
 
 import nltk
-import pkg_resources
 from chardet.universaldetector import UniversalDetector
 from nltk.tag.stanford import StanfordNERTagger
 
 from philter_lite.coordinate_map import CoordinateMap
+from philter_lite.filters import filter_db
 
 DEFAULT_PHI_TYPE_LIST = [
     "DATE",
@@ -30,20 +29,17 @@ class Filter:
     title: str
     type: str
     exclude: bool
-    notes: str
     phi_type: Optional[str]
 
 
 @dataclass(frozen=True)
 class SetFilter(Filter):
-    filepath: str
     pos: List[str]
     data: Pattern[str]
 
 
 @dataclass(frozen=True)
 class RegexFilter(Filter):
-    filepath: str
     data: Pattern[str]
 
 
@@ -51,7 +47,6 @@ class RegexFilter(Filter):
 class RegexContextFilter(Filter):
     context: str
     context_filter: str
-    filepath: str
     data: Pattern[str]
 
 
@@ -88,9 +83,8 @@ class DataTracker:
     non_phi: List[NonPhiEntry]
 
 
-def precompile(filepath):
+def precompile(regex: str):
     """ precompiles our regex to speed up pattern matching"""
-    regex = open(filepath, "r").read().strip()
     # NOTE: this is not thread safe! but we want to print a more detailed warning message
     with warnings.catch_warnings():
         warnings.simplefilter(
@@ -99,30 +93,17 @@ def precompile(filepath):
         try:
             re_compiled = re.compile(regex)
         except FutureWarning as warn:
-            print("FutureWarning: {0} in file ".format(warn) + filepath)
             warnings.simplefilter(action="ignore", category=FutureWarning)
             re_compiled = re.compile(regex)  # assign nevertheless
     return re_compiled
 
 
-def init_set(filepath):
-    """ loads a set of words, (must be a dictionary or set shape) returns result"""
-    if filepath.endswith(".pkl"):
-        try:
-            with open(filepath, "rb") as pickle_file:
-                set_data = pickle.load(pickle_file)
-        except UnicodeDecodeError:
-            with open(filepath, "rb") as pickle_file:
-                set_data = pickle.load(pickle_file, encoding="latin1")
-    elif filepath.endswith(".json"):
-        set_data = json.loads(open(filepath, "r").read())
-
-    else:
-        raise Exception("Invalid filteype", filepath)
-    return set_data
-
-
-def filter_from_dict(filter_dict):
+def filter_from_dict(
+    filter_dict,
+    regex_db=filter_db.regex_db,
+    regex_context_db=filter_db.regex_context_db,
+    set_db=filter_db.set_db,
+):
     known_pattern_types = {
         "regex",
         "set",
@@ -131,77 +112,44 @@ def filter_from_dict(filter_dict):
         "pos_matcher",
         "match_all",
     }
-    set_filetypes = {"pkl", "json"}
-    regex_filetypes = {"txt"}
 
     filter_type = filter_dict["type"]
-
-    resource_package = __name__
 
     if filter_type not in known_pattern_types:
         raise Exception("Pattern type is unknown", filter_type)
 
     if filter_type == "set":
-        filter_path = pkg_resources.resource_filename(
-            resource_package, filter_dict["filepath"]
-        )
-        if not os.path.exists(filter_path):
-            raise Exception("Config filepath does not exist", filter_path)
-        if filter_path.split(".")[-1] not in set_filetypes:
-            raise Exception(
-                "Invalid filteype", filter_path, "must be of", set_filetypes
-            )
-        data = init_set(filter_path)
+        set_keyword = filter_dict["keyword"]
+        data = _nested_get(set_db, set_keyword.split("."))
         return SetFilter(
             title=filter_dict["title"],
             type=filter_type,
             exclude=filter_dict["exclude"],
-            filepath=filter_path,
-            notes=filter_dict["notes"],
             data=data,
             pos=filter_dict["pos"],
             phi_type=filter_dict.get("phi_type", None),
         )
     elif filter_type == "regex":
-        filter_path = pkg_resources.resource_filename(
-            resource_package, filter_dict["filepath"]
-        )
-
-        if not os.path.exists(filter_path):
-            raise Exception("Config filepath does not exist", filter_path)
-        if filter_path.split(".")[-1] not in regex_filetypes:
-            raise Exception(
-                "Invalid filteype", filter_path, "must be of", regex_filetypes
-            )
-        data = precompile(filter_path)
+        regex_keyword = filter_dict["keyword"]
+        regex = _nested_get(regex_db, regex_keyword.split("."))
+        data = precompile(regex)
         return RegexFilter(
             title=filter_dict["title"],
             type=filter_type,
             exclude=filter_dict["exclude"],
-            filepath=filter_path,
-            notes=filter_dict["notes"],
             data=data,
             phi_type=filter_dict.get("phi_type", None),
         )
 
     elif filter_type == "regex_context":
-        filter_path = pkg_resources.resource_filename(
-            resource_package, filter_dict["filepath"]
-        )
-        if not os.path.exists(filter_path):
-            raise Exception("Config filepath does not exist", filter_path)
-        if filter_path.split(".")[-1] not in regex_filetypes:
-            raise Exception(
-                "Invalid filtertype", filter_path, "must be of", regex_filetypes
-            )
-        data = precompile(filter_path)
+        regex_keyword = filter_dict["keyword"]
+        regex = _nested_get(regex_context_db, regex_keyword.split("."))
+        data = precompile(regex)
 
         return RegexContextFilter(
             title=filter_dict["title"],
             type=filter_type,
             exclude=filter_dict["exclude"],
-            filepath=filter_dict["filepath"],
-            notes=filter_dict["notes"],
             context=filter_dict["context"],
             context_filter=filter_dict["context_filter"],
             data=data,
@@ -212,7 +160,6 @@ def filter_from_dict(filter_dict):
             title=filter_dict["title"],
             type=filter_type,
             exclude=filter_dict["exclude"],
-            notes=filter_dict["notes"],
             pos=filter_dict["pos"],
             phi_type=filter_dict.get("phi_type", None),
         )
@@ -221,7 +168,6 @@ def filter_from_dict(filter_dict):
             title=filter_dict["title"],
             type=filter_type,
             exclude=filter_dict["exclude"],
-            notes=filter_dict["notes"],
             phi_type=filter_dict.get("phi_type", None),
         )
 
@@ -786,3 +732,9 @@ def phi_context(filename, word, word_index, words, context_window=10):
     window = words[left_index:right_index]
 
     return {"filename": filename, "phi": word, "context": window}
+
+
+def _nested_get(a_dict, keys):
+    for key in keys:
+        a_dict = a_dict[key]
+    return a_dict
