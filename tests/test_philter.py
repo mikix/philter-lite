@@ -12,6 +12,7 @@ def test_filter_from_dict():
         "keyword": "addresses.city",
         "exclude": "test_ex",
         "notes": "test_notes",
+        "phi_type": "SOMETHING",
     }
 
     filter = philter.filter_from_dict(filter_dict)
@@ -20,6 +21,7 @@ def test_filter_from_dict():
     assert filter.title == "test_city"
     assert filter.data is not None
     assert filter.exclude == "test_ex"
+    assert filter.phi_type == "SOMETHING"
     assert isinstance(filter, philter.RegexFilter)
 
     filter_dict = {
@@ -29,6 +31,7 @@ def test_filter_from_dict():
         "context": "right",
         "context_filter": "Firstnames Blacklist",
         "keyword": "regex_context.names_regex_context1",
+        "phi_type": "Something",
     }
 
     filter = philter.filter_from_dict(filter_dict)
@@ -47,6 +50,7 @@ def test_filter_from_dict():
         "exclude": False,
         "keyword": "nonames",
         "pos": [],
+        "phi_type": "Something",
     }
 
     filter = philter.filter_from_dict(filter_dict)
@@ -62,7 +66,8 @@ def test_filter_from_dict():
         "title": "POS MATCHER",
         "type": "pos_matcher",
         "exclude": False,
-        "pos": ["CD",],
+        "pos": ["CD"],
+        "phi_type": "OTHER",
     }
 
     filter = philter.filter_from_dict(filter_dict)
@@ -74,6 +79,19 @@ def test_filter_from_dict():
     assert isinstance(filter, philter.PosFilter)
 
 
+def test_filter_from_dict_missing_phi_type():
+    filter_dict = {
+        "title": "test_city",
+        "type": "regex",
+        "keyword": "addresses.city",
+        "exclude": "test_ex",
+        "notes": "test_notes",
+    }
+
+    with pytest.raises(KeyError):
+        philter.filter_from_dict(filter_dict)
+
+
 def test_filter_from_dict_missing_file():
     filter_dict = {
         "type": "regex",
@@ -82,3 +100,35 @@ def test_filter_from_dict_missing_file():
 
     with pytest.raises(Exception):
         philter.filter_from_dict(filter_dict)
+
+
+def test_map_coordinates():
+    patterns = [
+        philter.filter_from_dict(
+            {
+                "title": "patient SSN",
+                "type": "regex",
+                "exclude": True,
+                "keyword": "mrn_id.ssn",
+                "notes": "",
+                "phi_type": "MRN",
+            }
+        ),
+        philter.filter_from_dict(
+            {
+                "title": "dd_mm_yyyy",
+                "type": "regex",
+                "exclude": True,
+                "keyword": "dates.dd_mm_yyyy",
+                "notes": "This should remove anything with pattern dd_mm_yyyy",
+                "phi_type": "DATE",
+            }
+        ),
+    ]
+    text_data, include_map, exclude_map, data_tracker = philter.map_coordinates(
+        "The patients SSN is 123-45-6789. They were born on 01/01/1984",
+        patterns,
+        ["MRN", "DATE"],
+    )
+
+    assert len(data_tracker.phi) == 2

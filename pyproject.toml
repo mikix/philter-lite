@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "philter-lite"
-version = "0.1.1"
+version = "0.2.0"
 description = ""
 authors = ["Beau Norgeot <beaunorgeot@gmail.com>", "Tim Orme <tim@sironamedical.com>"]
 license = "BSD-3-Clause"
