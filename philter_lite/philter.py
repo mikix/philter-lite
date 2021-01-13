@@ -29,7 +29,7 @@ class Filter:
     title: str
     type: str
     exclude: bool
-    phi_type: Optional[str]
+    phi_type: str
 
 
 @dataclass(frozen=True)
@@ -127,7 +127,7 @@ def filter_from_dict(
             exclude=filter_dict["exclude"],
             data=data,
             pos=filter_dict["pos"],
-            phi_type=filter_dict.get("phi_type", None),
+            phi_type=filter_dict["phi_type"],
         )
     elif filter_type == "regex":
         regex_keyword = filter_dict["keyword"]
@@ -138,7 +138,7 @@ def filter_from_dict(
             type=filter_type,
             exclude=filter_dict["exclude"],
             data=data,
-            phi_type=filter_dict.get("phi_type", None),
+            phi_type=filter_dict["phi_type"],
         )
 
     elif filter_type == "regex_context":
@@ -153,7 +153,7 @@ def filter_from_dict(
             context=filter_dict["context"],
             context_filter=filter_dict["context_filter"],
             data=data,
-            phi_type=filter_dict.get("phi_type", None),
+            phi_type=filter_dict["phi_type"],
         )
     elif filter_type == "pos_matcher":
         return PosFilter(
@@ -161,14 +161,14 @@ def filter_from_dict(
             type=filter_type,
             exclude=filter_dict["exclude"],
             pos=filter_dict["pos"],
-            phi_type=filter_dict.get("phi_type", None),
+            phi_type=filter_dict["phi_type"],
         )
     else:
         return Filter(
             title=filter_dict["title"],
             type=filter_type,
             exclude=filter_dict["exclude"],
-            phi_type=filter_dict.get("phi_type", None),
+            phi_type=filter_dict["phi_type"],
         )
 
 
@@ -246,6 +246,9 @@ def map_coordinates(
     phi_type_dict = {}
     for phi_type in phi_type_list:
         phi_type_dict[phi_type] = CoordinateMap()
+
+    # Also add "OTHER" type for filters that aren't appropriately labeled
+    phi_type_dict["OTHER"] = CoordinateMap()
 
     # Create inital self.exclude/include for file
     for i, pat in enumerate(patterns):
