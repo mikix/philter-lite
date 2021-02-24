@@ -1,17 +1,13 @@
-import json
-import os
 import re
-import subprocess
 import warnings
 from dataclasses import dataclass
-from typing import Dict, List, Optional, Pattern
+from typing import Dict, List
 
 import nltk
-from chardet.universaldetector import UniversalDetector
-from nltk.tag.stanford import StanfordNERTagger
 
 from philter_lite.coordinate_map import CoordinateMap
-from philter_lite.filters import filter_db
+
+from .filters import Filter, PosFilter, RegexContextFilter, RegexFilter, SetFilter
 
 DEFAULT_PHI_TYPE_LIST = [
     "DATE",
@@ -22,42 +18,6 @@ DEFAULT_PHI_TYPE_LIST = [
     "Name",
     "OTHER",
 ]
-
-
-@dataclass(frozen=True)
-class Filter:
-    title: str
-    type: str
-    exclude: bool
-    phi_type: str
-
-
-@dataclass(frozen=True)
-class SetFilter(Filter):
-    pos: List[str]
-    data: Pattern[str]
-
-
-@dataclass(frozen=True)
-class RegexFilter(Filter):
-    data: Pattern[str]
-
-
-@dataclass(frozen=True)
-class RegexContextFilter(Filter):
-    context: str
-    context_filter: str
-    data: Pattern[str]
-
-
-@dataclass(frozen=True)
-class PosFilter(Filter):
-    pos: List[str]
-
-
-@dataclass(frozen=True)
-class NerFilter(Filter):
-    pos: Optional[List[str]]
 
 
 @dataclass(frozen=True)
@@ -83,143 +43,7 @@ class DataTracker:
     non_phi: List[NonPhiEntry]
 
 
-def precompile(regex: str):
-    """ precompiles our regex to speed up pattern matching"""
-    # NOTE: this is not thread safe! but we want to print a more detailed warning message
-    with warnings.catch_warnings():
-        warnings.simplefilter(
-            action="error", category=FutureWarning
-        )  # in order to print a detailed message
-        try:
-            re_compiled = re.compile(regex)
-        except FutureWarning as warn:
-            warnings.simplefilter(action="ignore", category=FutureWarning)
-            re_compiled = re.compile(regex)  # assign nevertheless
-    return re_compiled
-
-
-def filter_from_dict(
-    filter_dict,
-    regex_db=filter_db.regex_db,
-    regex_context_db=filter_db.regex_context_db,
-    set_db=filter_db.set_db,
-):
-    known_pattern_types = {
-        "regex",
-        "set",
-        "regex_context",
-        "stanford_ner",
-        "pos_matcher",
-        "match_all",
-    }
-
-    filter_type = filter_dict["type"]
-
-    if filter_type not in known_pattern_types:
-        raise Exception("Pattern type is unknown", filter_type)
-
-    if filter_type == "set":
-        set_keyword = filter_dict["keyword"]
-        data = _nested_get(set_db, set_keyword.split("."))
-        return SetFilter(
-            title=filter_dict["title"],
-            type=filter_type,
-            exclude=filter_dict["exclude"],
-            data=data,
-            pos=filter_dict["pos"],
-            phi_type=filter_dict["phi_type"],
-        )
-    elif filter_type == "regex":
-        regex_keyword = filter_dict["keyword"]
-        regex = _nested_get(regex_db, regex_keyword.split("."))
-        data = precompile(regex)
-        return RegexFilter(
-            title=filter_dict["title"],
-            type=filter_type,
-            exclude=filter_dict["exclude"],
-            data=data,
-            phi_type=filter_dict["phi_type"],
-        )
-
-    elif filter_type == "regex_context":
-        regex_keyword = filter_dict["keyword"]
-        regex = _nested_get(regex_context_db, regex_keyword.split("."))
-        data = precompile(regex)
-
-        return RegexContextFilter(
-            title=filter_dict["title"],
-            type=filter_type,
-            exclude=filter_dict["exclude"],
-            context=filter_dict["context"],
-            context_filter=filter_dict["context_filter"],
-            data=data,
-            phi_type=filter_dict["phi_type"],
-        )
-    elif filter_type == "pos_matcher":
-        return PosFilter(
-            title=filter_dict["title"],
-            type=filter_type,
-            exclude=filter_dict["exclude"],
-            pos=filter_dict["pos"],
-            phi_type=filter_dict["phi_type"],
-        )
-    else:
-        return Filter(
-            title=filter_dict["title"],
-            type=filter_type,
-            exclude=filter_dict["exclude"],
-            phi_type=filter_dict["phi_type"],
-        )
-
-
-def build_filters(filter_path) -> List[Filter]:
-    if not os.path.exists(filter_path):
-        raise Exception("Filepath does not exist", filter_path)
-    with open(filter_path, "r") as fil_file:
-        return [filter_from_dict(x) for x in json.loads(fil_file.read())]
-
-
-def build_ner_tagger(
-    classifier, tagger_jar, download: bool = True
-) -> StanfordNERTagger:
-    if not os.path.exists(classifier) and not download:
-        raise Exception(
-            "Filepath does not exist", classifier,
-        )
-    else:
-        # download the ner data
-        process = subprocess.Popen(
-            "cd generate_dataset && ./download_ner.sh".split(), stdout=subprocess.PIPE,
-        )
-        process.communicate()
-
-    if not os.path.exists(tagger_jar):
-        raise Exception("Filepath does not exist", tagger_jar)
-
-    return StanfordNERTagger(classifier, tagger_jar)
-
-
-def get_pos(cleaned):
-    return nltk.pos_tag(cleaned)
-
-
-def get_clean(text, pre_process=r"[^a-zA-Z0-9]"):
-    # Use pre-process to split sentence by spaces AND symbols, while preserving spaces in the split list
-    lst = re.split(r"(\s+)", text)
-    cleaned = []
-    for item in lst:
-        if len(item) > 0:
-            if not item.isspace():
-                split_item = re.split(r"(\s+)", re.sub(pre_process, " ", item))
-                for elem in split_item:
-                    if len(elem) > 0:
-                        cleaned.append(elem)
-            else:
-                cleaned.append(item)
-    return cleaned
-
-
-def map_coordinates(
+def detect_phi(
     text_data: str,
     patterns: List[Filter],
     phi_type_list: List[str] = DEFAULT_PHI_TYPE_LIST,
@@ -255,26 +79,24 @@ def map_coordinates(
         pattern_coord = pattern_coords[pat.title]
 
         if pat.type == "regex" and isinstance(pat, RegexFilter):
-            map_regex(text=text_data, coord_map=pattern_coord, pattern=pat)
+            _map_regex(text=text_data, coord_map=pattern_coord, pattern=pat)
         elif pat.type == "set" and isinstance(pat, SetFilter):
-            map_set(text=text_data, coord_map=pattern_coord, pattern=pat)
+            _map_set(text=text_data, coord_map=pattern_coord, pattern=pat)
         elif pat.type == "regex_context" and isinstance(pat, RegexContextFilter):
-            map_regex_context(
+            _map_regex_context(
                 text=text_data,
                 coord_map=pattern_coord,
                 all_patterns=pattern_coords,
                 include_map=include_map,
                 pattern=pat,
             )
-        elif pat.type == "stanford_ner" and isinstance(pat, NerFilter):
-            map_ner(text=text_data, pattern=pat)
         elif pat.type == "pos_matcher" and isinstance(pat, PosFilter):
-            map_pos(text=text_data, coord_map=pattern_coord, pattern=pat)
+            _map_parts_of_speech(text=text_data, coord_map=pattern_coord, pattern=pat)
         elif pat.type == "match_all":
-            match_all(text=text_data, coord_map=pattern_coord)
+            _match_all(text=text_data, coord_map=pattern_coord)
         else:
             raise Exception("Error, pattern type not supported: ", pat.type)
-        get_exclude_include_maps(
+        _get_exclude_include_maps(
             pat,
             text_data,
             pattern_coord,
@@ -300,10 +122,30 @@ def map_coordinates(
                 )
             )
 
-    return text_data, include_map, exclude_map, data_tracker
+    return include_map, exclude_map, data_tracker
 
 
-def map_regex(
+def _get_pos(cleaned):
+    return nltk.pos_tag(cleaned)
+
+
+def _get_clean(text, pre_process=r"[^a-zA-Z0-9]"):
+    # Use pre-process to split sentence by spaces AND symbols, while preserving spaces in the split list
+    lst = re.split(r"(\s+)", text)
+    cleaned = []
+    for item in lst:
+        if len(item) > 0:
+            if not item.isspace():
+                split_item = re.split(r"(\s+)", re.sub(pre_process, " ", item))
+                for elem in split_item:
+                    if len(elem) > 0:
+                        cleaned.append(elem)
+            else:
+                cleaned.append(item)
+    return cleaned
+
+
+def _map_regex(
     text, pattern: RegexFilter, coord_map: CoordinateMap, pre_process=r"[^a-zA-Z0-9]",
 ) -> CoordinateMap:
     """ Creates a coordinate map from the pattern on this data
@@ -354,7 +196,7 @@ def map_regex(
         return coord_map
 
 
-def map_regex_context(
+def _map_regex_context(
     text,
     pattern: RegexContextFilter,
     coord_map: CoordinateMap,
@@ -447,14 +289,14 @@ def map_regex_context(
     return coord_map
 
 
-def match_all(text, coord_map: CoordinateMap) -> CoordinateMap:
+def _match_all(text, coord_map: CoordinateMap) -> CoordinateMap:
     """ Simply maps to the entirety of the file """
     # add the entire length of the file
     coord_map.add(0, len(text))
     return coord_map
 
 
-def map_set(text, coord_map: CoordinateMap, pattern: SetFilter) -> CoordinateMap:
+def _map_set(text, coord_map: CoordinateMap, pattern: SetFilter) -> CoordinateMap:
     """ Creates a coordinate mapping of words any words in this set"""
 
     set_data = pattern.data
@@ -466,7 +308,7 @@ def map_set(text, coord_map: CoordinateMap, pattern: SetFilter) -> CoordinateMap
     if len(pos_set) > 0:
         check_pos = True
 
-    cleaned = get_clean(text)
+    cleaned = _get_clean(text)
     pos_list = nltk.pos_tag(cleaned)
 
     start_coordinate = 0
@@ -495,16 +337,18 @@ def map_set(text, coord_map: CoordinateMap, pattern: SetFilter) -> CoordinateMap
     return coord_map
 
 
-def map_pos(text, pattern: PosFilter, coord_map: CoordinateMap) -> CoordinateMap:
+def _map_parts_of_speech(
+    text, pattern: PosFilter, coord_map: CoordinateMap
+) -> CoordinateMap:
     """ Creates a coordinate mapping of words which match this part of speech (POS)"""
 
     pos_set = set(pattern.pos)
 
     # Use pre-process to split sentence by spaces AND symbols, while preserving spaces in the split list
 
-    cleaned = get_clean(text)
+    cleaned = _get_clean(text)
 
-    pos_list = get_pos(cleaned)  # pos_list = nltk.pos_tag(cleaned)
+    pos_list = _get_pos(cleaned)  # pos_list = nltk.pos_tag(cleaned)
     start_coordinate = 0
     for tup in pos_list:
         word = tup[0]
@@ -526,63 +370,7 @@ def map_pos(text, pattern: PosFilter, coord_map: CoordinateMap) -> CoordinateMap
     return coord_map
 
 
-def map_ner(
-    text,
-    pattern: NerFilter,
-    coord_map: CoordinateMap,
-    stanford_ner_tagger: StanfordNERTagger,
-    pre_process=r"[^a-zA-Z0-9]+",
-) -> CoordinateMap:
-    """ map NER tagging"""
-    pos_set = set()
-    if pattern.pos:
-        pos_set = set(pattern.pos)
-
-    lst = re.split(r"(\s+)", text)
-    cleaned = []
-    for item in lst:
-        if len(item) > 0:
-            cleaned.append(item)
-
-    ner_no_spaces = stanford_ner_tagger.tag(cleaned)
-    # get our ner tags
-    ner_set = {}
-    for tup in ner_no_spaces:
-        ner_set[tup[0]] = tup[1]
-    ner_set_with_locations = {}
-    start_coordinate = 0
-    for w in cleaned:
-        if w in ner_set:
-            ner_set_with_locations[w] = (ner_set[w], start_coordinate)
-        start_coordinate += len(w)
-
-    # for the text, break into words and mark POS
-    # with the parts of speech labeled, match any of these to our coordinate
-    # add these coordinates to our coordinate map
-    start_coordinate = 0
-    for word in cleaned:
-
-        word_clean = re.sub(pre_process, "", word.lower().strip())
-        if len(word_clean) == 0:
-            # got a blank space or something without any characters or digits, move forward
-            start_coordinate += len(word)
-            continue
-
-        if word in ner_set_with_locations:
-            ner_tag = ner_set_with_locations[word][0]
-            start = ner_set_with_locations[word][1]
-            if ner_tag in pos_set:
-                stop = start + len(word)
-                coord_map.add_extend(start, stop)
-                print("FOUND: ", word, "NER: ", ner_tag, start, stop)
-
-        # advance our start coordinate
-        start_coordinate += len(word)
-
-    return coord_map
-
-
-def get_exclude_include_maps(
+def _get_exclude_include_maps(
     pattern: Filter,
     txt,
     coord_map: CoordinateMap,
@@ -637,107 +425,3 @@ def get_exclude_include_maps(
                         filepath=filter_path,
                     )
                 )
-
-
-def save_to_asterisk(contents, output_file):
-    with open(output_file, "w", encoding="utf-8", errors="surrogateescape") as f:
-        f.write(contents)
-
-
-def save_to_i2b2(contents, output_file):
-    with open(output_file, "w", errors="xmlcharrefreplace") as f:
-        f.write(contents)
-
-
-def transform_text_asterisk(txt, include_map: CoordinateMap):
-    last_marker = 0
-    punctuation_matcher = re.compile(r"[^a-zA-Z0-9*]")
-    # read the text by character, any non-punc non-overlaps will be replaced
-    contents = []
-    for i in range(0, len(txt)):
-
-        if i < last_marker:
-            continue
-
-        if include_map.does_exist(i):
-            # add our preserved text
-            start, stop = include_map.get_coords(i)
-            contents.append(txt[start:stop])
-            last_marker = stop
-        elif punctuation_matcher.match(txt[i]):
-            contents.append(txt[i])
-        else:
-            contents.append("*")
-
-    return "".join(contents)
-
-
-def transform_text_i2b2(tagdata: DataTracker):
-    """creates a string in i2b2-XML format"""
-    root = "Philter"
-    contents = [
-        '<?xml version="1.0" ?>\n',
-        "<" + root + ">\n",
-        "<TEXT><![CDATA[",
-        tagdata.text,
-        "]]></TEXT>\n",
-        "<TAGS>\n",
-    ]
-    for i, phi in enumerate(tagdata.phi):
-        phi_type = phi.phi_type
-        contents.append("<")
-        contents.append(phi_type)
-        contents.append(' id="P')
-        contents.append(str(i))
-        contents.append('" start="')
-        contents.append(str(phi.start))
-        contents.append('" end="')
-        contents.append(str(phi.stop))
-        contents.append('" text="')
-        contents.append(phi.word)
-        contents.append('" TYPE="')
-        contents.append(phi_type)
-        contents.append('" comment="" />\n')
-
-    # for loop over complement - PHI, create additional tags (UNKNOWN)
-    contents.append("</TAGS>\n")
-    contents.append("</" + root + ">\n")
-
-    return "".join(contents)
-
-
-def detect_encoding(fp):
-    if not os.path.exists(fp):
-        raise Exception("Filepath does not exist", fp)
-
-    detector = UniversalDetector()
-    with open(fp, "rb") as f:
-        for line in f:
-            detector.feed(line)
-            if detector.done:
-                break
-        detector.close()
-    return detector.result
-
-
-def phi_context(filename, word, word_index, words, context_window=10):
-    """ helper function, creates our phi data type with source file, and context window"""
-    if not os.path.exists(filename):
-        raise Exception("Filepath does not exist", filename)
-
-    left_index = word_index - context_window
-    if left_index < 0:
-        left_index = 0
-
-    right_index = word_index + context_window
-    if right_index >= len(words):
-        right_index = len(words) - 1
-    window = words[left_index:right_index]
-
-    return {"filename": filename, "phi": word, "context": window}
-
-
-def _nested_get(a_dict, keys):
-    for key in keys:
-        a_dict = a_dict[key]
-    return a_dict
