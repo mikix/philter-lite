@@ -163,7 +163,7 @@ def _map_regex(
         return coord_map
 
     # MATCHALL/CATCHALL
-    elif regex == re.compile("."):
+    else:
         # Split note the same way we would split for set or POS matching
         matchall_list = re.split(r"(\s+)", text)
         matchall_list_cleaned = []
@@ -380,10 +380,7 @@ def _get_exclude_include_maps(
     data_tracker: DataTracker,
 ):
     exclude = pattern.exclude
-    if hasattr(pattern, "filepath"):
-        filter_path = pattern.filepath
-    else:
-        filter_path = pattern.title
+    filter_path = pattern.title
     if pattern.phi_type:
         phi_type = pattern.phi_type
     else:
