@@ -1,4 +1,5 @@
 import os
+from typing import Any, Dict
 
 import pytest
 
@@ -7,7 +8,7 @@ from philter_lite import detect_phi, filter_from_dict, filters, load_filters
 
 
 def test_filter_from_dict():
-    filter_dict = {
+    filter_dict: Dict[str, Any] = {
         "title": "test_city",
         "type": "regex",
         "keyword": "addresses.city",
