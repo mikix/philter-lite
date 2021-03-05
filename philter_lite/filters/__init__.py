@@ -20,7 +20,7 @@ class Filter:
 @dataclass(frozen=True)
 class SetFilter(Filter):
     pos: List[str]
-    data: Pattern[str]
+    data: List[str]
 
 
 @dataclass(frozen=True)
