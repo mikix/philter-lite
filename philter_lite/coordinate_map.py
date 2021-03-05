@@ -1,5 +1,6 @@
 import itertools
 import re
+from typing import List
 
 
 class CoordinateMap:
@@ -201,7 +202,7 @@ class CoordinateMap:
 
         complement_coordinate_map = {}
 
-        current_map_coordinates = []
+        current_map_coordinates: List[int] = []
         for start_key in self.map:
             start = start_key
             stop = self.map[start_key]
@@ -225,8 +226,8 @@ class CoordinateMap:
             for key, group in itertools.groupby(
                 enumerate(iterable), lambda t: t[1] - t[0]
             ):
-                group = list(group)
-                yield group[0][1], group[-1][1] + 1
+                group_list = list(group)
+                yield group_list[0][1], group_list[-1][1] + 1
 
         complement_coordinate_ranges = list(to_ranges(complement_coordinates))
 

@@ -1,9 +1,8 @@
 import argparse
 import distutils.util
 import os
-import re
 
-from philter_lite import evaluate, philter
+import philter_lite
 
 
 def main():
@@ -68,13 +67,6 @@ def main():
         type=lambda x: bool(distutils.util.strtobool(x)),
     )
     ap.add_argument(
-        "-e",
-        "--run_eval",
-        default=True,
-        help="When run_eval is true, will run our eval script and emit summarized results to terminal",
-        type=lambda x: bool(distutils.util.strtobool(x)),
-    )
-    ap.add_argument(
         "-t",
         "--freq_table",
         default=False,
@@ -118,16 +110,13 @@ def main():
     )
 
     args = ap.parse_args()
-    run_eval = args.run_eval
     verbose = args.verbose
 
     if args.prod:
-        run_eval = False
         verbose = False
 
         philter_config = {
             "verbose": verbose,
-            "run_eval": run_eval,
             "finpath": args.input,
             "foutpath": args.output,
             "outformat": args.outputformat,
@@ -138,7 +127,6 @@ def main():
     else:
         philter_config = {
             "verbose": args.verbose,
-            "run_eval": args.run_eval,
             "freq_table": args.freq_table,
             "initials": args.initials,
             "finpath": args.input,
@@ -156,43 +144,27 @@ def main():
     if verbose:
         print("RUNNING ", philter_config["filters"])
 
-    filters = philter.build_filters(philter_config["filters"])
-
-    stanford_ner = None
-    if len([x for x in filters if x.type == "stanford_ner"]):
-        stanford_ner = philter.build_ner_tagger(
-            philter_config["stanford_ner_tagger"]["classifier"],
-            philter_config["stanford_ner_tagger"]["stanford_ner_tagger"],
-        )
+    filters = philter_lite.load_filters(philter_config["filters"])
 
     for root, dirs, files in os.walk(philter_config["finpath"]):
         for file in files:
             with open(os.path.join(root, file)) as inf:
-                entry, include_map, exclude_map, data_tracker = philter.map_coordinates(
-                    inf.read(), patterns=filters
+                text = inf.read()
+                include_map, exclude_map, data_tracker = philter_lite.detect_phi(
+                    text, patterns=filters
                 )
                 if philter_config["outformat"] == "i2b2":
                     with open(
                         os.path.join(philter_config["foutpath"], f"{file}.txt"), "w"
                     ) as fout:
-                        fout.write(philter.transform_text_i2b2(data_tracker))
+                        fout.write(philter_lite.transform_text_i2b2(data_tracker))
                 elif philter_config["outformat"] == "asterisk":
                     with open(
                         os.path.join(philter_config["foutpath"], f"{file}.txt"), "w"
                     ) as fout:
-                        fout.write(philter.transform_text_asterisk(entry, include_map))
-
-    # evaluate the effectiveness
-    if run_eval and args.outputformat == "asterisk":
-        evaluate.eval(
-            in_path=args.output,
-            anno_path=args.anno,
-            anno_suffix=".txt",
-            fn_output="data/phi/fn.txt",
-            fp_output="data/phi/fp.txt",
-            summary_output="./data/phi/summary.json",
-            punctuation_matcher=re.compile(r"[^a-zA-Z0-9\*]"),
-        )
+                        fout.write(
+                            philter_lite.transform_text_asterisk(text, include_map)
+                        )
 
 
 if __name__ == "__main__":
