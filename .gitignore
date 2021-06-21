@@ -2,3 +2,6 @@
 build/
 *.egg-info/
 dist/
+.tox/
+.venv/
+__pycache__/
