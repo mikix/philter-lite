@@ -160,7 +160,7 @@ def test_detect_phi_regex_interpolation():
         ),
     ]
     include_map, exclude_map, data_tracker = detect_phi(
-        "They injured themselves in Fall of 2020.", patterns, ["MRN", "DATE"],
+        "They injured themselves in Fall of 2020.", patterns, ["MRN", "DATE"]
     )
 
     assert len(data_tracker.phi) == 1

@@ -48,9 +48,9 @@ def detect_phi(
     patterns: List[Filter],
     phi_type_list: List[str] = DEFAULT_PHI_TYPE_LIST,
 ):
-    """ Runs the set, or regex on the input data
-        generating a coordinate map of hits given
-        (this performs a dry run on the data and doesn't transform)
+    """Runs the set, or regex on the input data
+    generating a coordinate map of hits given
+    (this performs a dry run on the data and doesn't transform)
     """
     # create coordinate maps for each pattern
     pattern_coords = {}
@@ -146,10 +146,10 @@ def _get_clean(text, pre_process=r"[^a-zA-Z0-9]"):
 
 
 def _map_regex(
-    text, pattern: RegexFilter, coord_map: CoordinateMap, pre_process=r"[^a-zA-Z0-9]",
+    text, pattern: RegexFilter, coord_map: CoordinateMap, pre_process=r"[^a-zA-Z0-9]"
 ) -> CoordinateMap:
-    """ Creates a coordinate map from the pattern on this data
-        generating a coordinate map of hits given (dry run doesn't transform)
+    """Creates a coordinate map from the pattern on this data
+    generating a coordinate map of hits given (dry run doesn't transform)
     """
     regex = pattern.data
 
@@ -204,7 +204,7 @@ def _map_regex_context(
     include_map: CoordinateMap,
     pre_process=r"[^a-zA-Z0-9]",
 ) -> CoordinateMap:
-    """ map_regex_context creates a coordinate map from combined regex + PHI coordinates
+    """map_regex_context creates a coordinate map from combined regex + PHI coordinates
     of all previously mapped patterns
     """
     regex = pattern.data
@@ -290,14 +290,14 @@ def _map_regex_context(
 
 
 def _match_all(text, coord_map: CoordinateMap) -> CoordinateMap:
-    """ Simply maps to the entirety of the file """
+    """Simply maps to the entirety of the file"""
     # add the entire length of the file
     coord_map.add(0, len(text))
     return coord_map
 
 
 def _map_set(text, coord_map: CoordinateMap, pattern: SetFilter) -> CoordinateMap:
-    """ Creates a coordinate mapping of words any words in this set"""
+    """Creates a coordinate mapping of words any words in this set"""
 
     set_data = pattern.data
 
@@ -340,7 +340,7 @@ def _map_set(text, coord_map: CoordinateMap, pattern: SetFilter) -> CoordinateMa
 def _map_parts_of_speech(
     text, pattern: PosFilter, coord_map: CoordinateMap
 ) -> CoordinateMap:
-    """ Creates a coordinate mapping of words which match this part of speech (POS)"""
+    """Creates a coordinate mapping of words which match this part of speech (POS)"""
 
     pos_set = set(pattern.pos)
 

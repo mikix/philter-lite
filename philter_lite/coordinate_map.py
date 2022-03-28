@@ -9,7 +9,7 @@ class CoordinateMap:
     This class stores start coordinates for any matches found for this pattern"""
 
     def __init__(self, pattern={"title": "untitled"}, debug=False):
-        """ internal data structure maps filepaths to a map of int:string (coordinate start --> stop)
+        """internal data structure maps filepaths to a map of int:string (coordinate start --> stop)
 
         map is the internal structure of
         { filename : { startcoordinate : stop_coordinate}}
@@ -28,7 +28,7 @@ class CoordinateMap:
         self.all_coords = {}
 
     def add(self, start, stop, overlap=False, pattern=""):
-        """ adds a new coordinate to the coordinate map
+        """adds a new coordinate to the coordinate map
 
         if overlap is false, this will reject any overlapping hits (usually from multiple regex scan runs)"""
         if not overlap:
@@ -46,7 +46,7 @@ class CoordinateMap:
         return True, None
 
     def add_pattern(self, start, stop, pattern):
-        """ adds this pattern to this start coord """
+        """adds this pattern to this start coord"""
         self.coord2pattern[start] = []
         self.coord2pattern[start].append(pattern)
 
@@ -86,7 +86,7 @@ class CoordinateMap:
         return True, None
 
     def remove(self, start, stop):
-        """ Removes this coordinate pairing from the map, all_coords, and coord2pattern"""
+        """Removes this coordinate pairing from the map, all_coords, and coord2pattern"""
         # delete from our map structure
         if start in self.map:
             del self.map[start]
@@ -97,7 +97,7 @@ class CoordinateMap:
         return True, None
 
     def scan(self):
-        """ does an inorder scan of the coordinates and their values"""
+        """does an inorder scan of the coordinates and their values"""
         for fn in self.map:
             coords = list(self.map[fn].keys())
             coords.sort()
@@ -119,13 +119,13 @@ class CoordinateMap:
             yield coord, self.map[coord]
 
     def does_exist(self, index):
-        """ Simple check to see if this index is a hit (start of coordinates)"""
+        """Simple check to see if this index is a hit (start of coordinates)"""
         if index in self.map:
             return True
         return False
 
     def does_overlap(self, start, stop):
-        """ Check if this coordinate overlaps with any existing range"""
+        """Check if this coordinate overlaps with any existing range"""
 
         ranges = [list(range(key, self.map[key] + 1)) for key in self.map]
         all_coords = [item for sublist in ranges for item in sublist]
@@ -136,7 +136,7 @@ class CoordinateMap:
         return False
 
     def calc_overlap(self, start, stop):
-        """ given a set of coordinates, will calculate all overlaps
+        """given a set of coordinates, will calculate all overlaps
         perf: stop after we know we won't hit any more
         perf: use binary search approach"""
 
@@ -157,7 +157,7 @@ class CoordinateMap:
         return overlaps
 
     def max_overlap(self, start, stop):
-        """ given a set of coordinates, will calculate max of all overlaps
+        """given a set of coordinates, will calculate max of all overlaps
         perf: stop after we know we won't hit any more
         perf: use binary search approach"""
 
@@ -198,7 +198,7 @@ class CoordinateMap:
         return overlaps
 
     def get_complement(self, text):
-        """ get the complementary coordinates of the input coordinate map (excludes punctuation)"""
+        """get the complementary coordinates of the input coordinate map (excludes punctuation)"""
 
         complement_coordinate_map = {}
 

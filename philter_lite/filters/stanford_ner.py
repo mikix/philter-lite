@@ -13,13 +13,11 @@ def build_ner_tagger(
     classifier, tagger_jar, download: bool = True
 ) -> StanfordNERTagger:
     if not os.path.exists(classifier) and not download:
-        raise Exception(
-            "Filepath does not exist", classifier,
-        )
+        raise Exception("Filepath does not exist", classifier)
     else:
         # download the ner data
         process = subprocess.Popen(
-            "cd generate_dataset && ./download_ner.sh".split(), stdout=subprocess.PIPE,
+            "cd generate_dataset && ./download_ner.sh".split(), stdout=subprocess.PIPE
         )
         process.communicate()
 
@@ -36,7 +34,7 @@ def map_ner(
     stanford_ner_tagger: StanfordNERTagger,
     pre_process=r"[^a-zA-Z0-9]+",
 ) -> CoordinateMap:
-    """ map NER tagging"""
+    """map NER tagging"""
     pos_set = set()
     if pattern.pos:
         pos_set = set(pattern.pos)

@@ -141,7 +141,7 @@ def load_filters(filter_path) -> List[Filter]:
 
 
 def _precompile(regex: str):
-    """ precompiles our regex to speed up pattern matching"""
+    """precompiles our regex to speed up pattern matching"""
     # NOTE: this is not thread safe! but we want to print a more detailed warning message
     with warnings.catch_warnings():
         warnings.simplefilter(
