@@ -10,12 +10,12 @@ from philter_lite.coordinate_map import CoordinateMap
 from .filters import Filter, PosFilter, RegexContextFilter, RegexFilter, SetFilter
 
 DEFAULT_PHI_TYPE_LIST = [
+    "AGE",
+    "CONTACT",  # email, phone number, etc
     "DATE",
-    "Patient_Social_Security_Number",
-    "Email",
-    "Provider_Address_or_Location",
-    "Age",
-    "Name",
+    "ID",  # MRN, social security number, etc
+    "LOCATION",  # everything from a street address to a hospital name to east/west/north/south
+    "NAME",
     "OTHER",
 ]
 

@@ -934,6 +934,7 @@ title = "full street address"
 type = "regex"
 exclude = true
 notes = "This should remove anything that looks like a full street address (numbers and words)"
+phi_type = "LOCATION"
 keyword = "addresses.full_street_address"
 
 [[filters]]
@@ -941,6 +942,7 @@ title = "full street address with concatenated street indicator"
 type = "regex"
 exclude = true
 notes = ""
+phi_type = "LOCATION"
 keyword = "addresses.full_street_address_with_concatenated_indicator"
 
 [[filters]]
@@ -948,6 +950,7 @@ title = "number streetname city"
 type = "regex"
 exclude = true
 notes = ""
+phi_type = "LOCATION"
 keyword = "addresses.num_streetname_city"
 
 [[filters]]
@@ -955,6 +958,7 @@ title = "hospital name 1"
 type = "regex"
 exclude = true
 notes = "This should remove anything the resembles a hospital name"
+phi_type = "LOCATION"
 keyword = "addresses.hospital1"
 
 [[filters]]
@@ -962,6 +966,7 @@ title = "hospital name 2"
 type = "regex"
 exclude = true
 notes = "This should remove anything the resembles a hospital name"
+phi_type = "LOCATION"
 keyword = "addresses.hospital2"
 
 [[filters]]
@@ -969,6 +974,7 @@ title = "number streetname noindicator suite"
 type = "regex"
 exclude = true
 notes = "This should remove anything that looks like a street address with a floor number extension"
+phi_type = "LOCATION"
 keyword = "addresses.number_streetname_noindicator_suite"
 
 [[filters]]
@@ -976,6 +982,7 @@ title = "number streetname city state"
 type = "regex"
 exclude = true
 notes = ""
+phi_type = "LOCATION"
 keyword = "addresses.num_streetname_city_state"
 
 [[filters]]
@@ -983,6 +990,7 @@ title = "number streetname extension?"
 type = "regex"
 exclude = true
 notes = "This should remove anything that looks like a street address (with a possible extension)"
+phi_type = "LOCATION"
 keyword = "addresses.num_streetname_extension"
 
 [[filters]]
@@ -990,13 +998,15 @@ title = "number streetname san"
 type = "regex"
 exclude = true
 notes = "This should remove anything that looks like the beginning of a street address followed by san (like san francsico)"
+phi_type = "LOCATION"
 keyword = "addresses.num_streetname_san"
 
 [[filters]]
 title = "number streetname"
 type = "regex"
 exclude = true
-notes = "This should remove anything that looks like the begiing of a street address"
+notes = "This should remove anything that looks like the beginning of a street address"
+phi_type = "LOCATION"
 keyword = "addresses.num_streetname"
 
 [[filters]]
@@ -1004,6 +1014,7 @@ title = "corner of street & street"
 type = "regex"
 exclude = true
 notes = "This should remove anything that looks like a street corner"
+phi_type = "LOCATION"
 keyword = "addresses.corner_of_street_&_street"
 
 [[filters]]
@@ -1011,6 +1022,7 @@ title = "street and street"
 type = "regex"
 exclude = true
 notes = "This should remove anything that looks like a street corner"
+phi_type = "LOCATION"
 keyword = "addresses.street_and_street"
 
 [[filters]]
@@ -1018,6 +1030,7 @@ title = "at street number dash street"
 type = "regex"
 exclude = true
 notes = "This should remove anything that looks like a street corner"
+phi_type = "LOCATION"
 keyword = "addresses.at_street_number_dash_street"
 
 [[filters]]
@@ -1025,6 +1038,7 @@ title = "at dash street"
 type = "regex"
 exclude = true
 notes = "This should remove anything that looks like a street corner"
+phi_type = "LOCATION"
 keyword = "addresses.at_street_dash_street"
 
 [[filters]]
@@ -1032,6 +1046,7 @@ title = "short street name"
 type = "regex"
 exclude = true
 notes = ""
+phi_type = "LOCATION"
 keyword = "addresses.short_street_name"
 
 [[filters]]
@@ -1039,6 +1054,7 @@ title = "streetname floor number"
 type = "regex"
 exclude = true
 notes = "This should remove anything that looks like a street address with a suite number extension"
+phi_type = "LOCATION"
 keyword = "addresses.streetname_floor_number"
 
 [[filters]]
@@ -1046,6 +1062,7 @@ title = "city state zip"
 type = "regex"
 exclude = true
 notes = "This should remove anything that looks like a partial street address (city, state, zip"
+phi_type = "LOCATION"
 keyword = "addresses.city_state_zip"
 
 [[filters]]
@@ -1053,6 +1070,7 @@ title = "city zip"
 type = "regex"
 exclude = true
 notes = "This should remove anything that has a city name, followed by a zip code"
+phi_type = "LOCATION"
 keyword = "addresses.city_zip"
 
 [[filters]]
@@ -1060,6 +1078,7 @@ title = "lives in"
 type = "regex"
 exclude = true
 notes = "This should remove anything that matches pattern lives in/on"
+phi_type = "LOCATION"
 keyword = "addresses.lives_in"
 
 [[filters]]
@@ -1067,6 +1086,7 @@ title = "city state"
 type = "regex"
 exclude = true
 notes = "This should remove anything that has a city name, followed by a state name/abbrev"
+phi_type = "LOCATION"
 keyword = "addresses.city_state"
 
 [[filters]]
@@ -1074,6 +1094,7 @@ title = "county name"
 type = "regex"
 exclude = true
 notes = ""
+phi_type = "LOCATION"
 keyword = "addresses.county_name"
 
 [[filters]]
@@ -1081,6 +1102,7 @@ title = "in city"
 type = "regex"
 exclude = true
 notes = "This should remove anything that has a city name"
+phi_type = "LOCATION"
 keyword = "addresses.in_city"
 
 [[filters]]
@@ -1088,6 +1110,7 @@ title = "city"
 type = "regex"
 exclude = true
 notes = "This should remove anything that matches pattern [name] [city]"
+phi_type = "LOCATION"
 keyword = "addresses.city"
 
 [[filters]]
@@ -1095,6 +1118,7 @@ title = "hospitalized at"
 type = "regex"
 exclude = true
 notes = "This should remove anything with 'hospitalized at' followed by a proper noun"
+phi_type = "LOCATION"
 keyword = "organizations.hospitalized_at_15chars"
 
 [[filters]]
@@ -1102,6 +1126,7 @@ title = "admission from"
 type = "regex"
 exclude = true
 notes = "This should remove anything with 'admission from' followed by a proper noun"
+phi_type = "LOCATION"
 keyword = "organizations.admission_from_14chars"
 
 [[filters]]
@@ -1109,6 +1134,7 @@ title = "admitted from"
 type = "regex"
 exclude = true
 notes = "This should remove anything with 'admitted from' followed by a proper noun"
+phi_type = "LOCATION"
 keyword = "organizations.admitted_from_hospital_13chars"
 
 [[filters]]
@@ -1116,6 +1142,7 @@ title = "admission to"
 type = "regex"
 exclude = true
 notes = "This should remove anything with 'admission to' followed by a proper noun"
+phi_type = "LOCATION"
 keyword = "organizations.admission_to_hospital_12chars"
 
 [[filters]]
@@ -1123,6 +1150,7 @@ title = "admitted to 1"
 type = "regex"
 exclude = true
 notes = "This should remove anything with 'admitted to' followed by a proper noun"
+phi_type = "LOCATION"
 keyword = "organizations.admitted_to_hospital_11chars"
 
 [[filters]]
@@ -1130,6 +1158,7 @@ title = "brought to"
 type = "regex"
 exclude = true
 notes = "This should remove anything with 'brought to' followed by a proper noun"
+phi_type = "LOCATION"
 keyword = "organizations.brought_to_hospital_10chars"
 
 [[filters]]
@@ -1137,6 +1166,7 @@ title = "taken to"
 type = "regex"
 exclude = true
 notes = "This should remove anything with 'taken to' followed by a proper noun"
+phi_type = "LOCATION"
 keyword = "organizations.taken_to_hospital_8chars"
 
 [[filters]]
@@ -1144,6 +1174,7 @@ title = "admitted to 2"
 type = "regex"
 exclude = true
 notes = "This should remove anything with 'admitted to' followed by a proper noun"
+phi_type = "LOCATION"
 keyword = "organizations.admitted_to_hospital_7chars"
 
 [[filters]]
@@ -1151,6 +1182,7 @@ title = "box room"
 type = "regex"
 exclude = true
 notes = "This should remove anything that has pattern box # followed by room #"
+phi_type = "LOCATION"
 keyword = "addresses.box_room"
 
 [[filters]]
@@ -1158,6 +1190,7 @@ title = "room box"
 type = "regex"
 exclude = true
 notes = "This should remove anything that has pattern room # followed by box #"
+phi_type = "LOCATION"
 keyword = "addresses.room_box"
 
 [[filters]]
@@ -1165,6 +1198,7 @@ title = "floor box"
 type = "regex"
 exclude = true
 notes = "This should remove anything that has pattern floor # followed by box #"
+phi_type = "LOCATION"
 keyword = "addresses.floor_box"
 
 [[filters]]
@@ -1172,6 +1206,7 @@ title = "desk #"
 type = "regex"
 exclude = true
 notes = "This should remove anything that has pattern desk #"
+phi_type = "LOCATION"
 keyword = "addresses.desk_#"
 
 [[filters]]
@@ -1179,6 +1214,7 @@ title = "pharmacy #"
 type = "regex"
 exclude = true
 notes = "This should remove anything that has pattern pharmacy #"
+phi_type = "LOCATION"
 keyword = "addresses.pharmacy_#"
 
 [[filters]]
@@ -1186,6 +1222,7 @@ title = "at location"
 type = "regex"
 exclude = true
 notes = "This should remove anything that has pattern at X"
+phi_type = "LOCATION"
 keyword = "addresses.at_address_noindicator"
 
 [[filters]]
@@ -1193,6 +1230,7 @@ title = "number cardinal direction"
 type = "regex"
 exclude = true
 notes = ""
+phi_type = "LOCATION"
 keyword = "addresses.number_cardinal_direction"
 
 [[filters]]
@@ -1200,6 +1238,7 @@ title = "waiting room"
 type = "regex"
 exclude = true
 notes = "This should remove anything that has pattern waiting room"
+phi_type = "LOCATION"
 keyword = "addresses.waiting_room"
 
 [[filters]]
@@ -1207,6 +1246,7 @@ title = "to state"
 type = "regex"
 exclude = true
 notes = "This should remove anything that has pattern to [state name]"
+phi_type = "LOCATION"
 keyword = "addresses.to_state"
 
 [[filters]]
@@ -1214,6 +1254,7 @@ title = "state indicator"
 type = "regex"
 exclude = true
 notes = "This should remove anything that has pattern to [state name]"
+phi_type = "LOCATION"
 keyword = "addresses.state_indicator"
 
 [[filters]]
@@ -1221,6 +1262,7 @@ title = "on streetname"
 type = "regex"
 exclude = true
 notes = "This should remove anything that has pattern on [street name]"
+phi_type = "LOCATION"
 keyword = "addresses.streetname_only"
 
 [[filters]]
@@ -1228,6 +1270,7 @@ title = "box"
 type = "regex"
 exclude = true
 notes = "This should remove anything that has a box number"
+phi_type = "LOCATION"
 keyword = "addresses.box"
 
 [[filters]]
@@ -1235,6 +1278,7 @@ title = "room"
 type = "regex"
 exclude = true
 notes = "This should remove anything that has a room number"
+phi_type = "LOCATION"
 keyword = "addresses.room_#"
 
 [[filters]]
@@ -1586,6 +1630,7 @@ title = "model number"
 type = "regex"
 exclude = true
 notes = "This should remove anything with pattern model number"
+phi_type = "ID"
 keyword = "mrn_id.model_number"
 
 [[filters]]
@@ -1593,6 +1638,7 @@ title = "lot #"
 type = "regex"
 exclude = true
 notes = "This should remove anything with pattern lot #"
+phi_type = "ID"
 keyword = "mrn_id.lot_#"
 
 [[filters]]
@@ -1600,6 +1646,7 @@ title = "id verbose"
 type = "regex"
 exclude = true
 notes = "This should remove anything with pattern ID: XXXXX"
+phi_type = "ID"
 keyword = "mrn_id.id_verbose"
 
 [[filters]]
@@ -1607,6 +1654,7 @@ title = "activation code"
 type = "regex"
 exclude = true
 notes = "This should remove anything with pattern activation code: XXXXX-XXXX-XXXXX"
+phi_type = "ID"
 keyword = "mrn_id.activation_code"
 
 [[filters]]
@@ -1614,6 +1662,7 @@ title = "six or more digits"
 type = "regex"
 exclude = true
 notes = "This should remove anything that matches any number with 6 or more digits (15 limit is arbitrary)"
+phi_type = "ID"
 keyword = "mrn_id.DDDDDD+"
 
 [[filters]]
@@ -1621,6 +1670,7 @@ title = "order number"
 type = "regex"
 exclude = true
 notes = "This should remove anything that matches order number ..."
+phi_type = "ID"
 keyword = "mrn_id.order_number"
 
 [[filters]]
@@ -1628,6 +1678,7 @@ title = "specimen number"
 type = "regex"
 exclude = true
 notes = "This should remove anything that matches specimen number ..."
+phi_type = "ID"
 keyword = "mrn_id.specimen_#"
 
 [[filters]]
@@ -1635,6 +1686,7 @@ title = "cassette_#"
 type = "regex"
 exclude = true
 notes = "This should remove anything that matches cassette_# ..."
+phi_type = "ID"
 keyword = "mrn_id.cassette_#"
 
 [[filters]]
@@ -1642,6 +1694,7 @@ title = "# reviewed by"
 type = "regex"
 exclude = true
 notes = "This should remove anything that matches # reviewed by ..."
+phi_type = "ID"
 keyword = "mrn_id.#_reviewed_by"
 
 [[filters]]
@@ -1649,6 +1702,7 @@ title = "account #"
 type = "regex"
 exclude = true
 notes = "This should remove anything that matches account #"
+phi_type = "ID"
 keyword = "mrn_id.account_#"
 
 [[filters]]
@@ -1656,6 +1710,7 @@ title = "accession #"
 type = "regex"
 exclude = true
 notes = "This should remove anything that matches accession #"
+phi_type = "ID"
 keyword = "mrn_id.accession_#"
 
 [[filters]]
@@ -1663,6 +1718,7 @@ title = "tape number"
 type = "regex"
 exclude = true
 notes = "This should remove anything that matches tape number"
+phi_type = "ID"
 keyword = "mrn_id.tape_number"
 
 [[filters]]
@@ -1670,6 +1726,7 @@ title = "CCC-DD-DDDDD"
 type = "regex"
 exclude = true
 notes = ""
+phi_type = "ID"
 keyword = "mrn_id.CCC-DD-DDDDD"
 
 [[filters]]
@@ -1677,6 +1734,7 @@ title = "CCDDDD-D-CC"
 type = "regex"
 exclude = true
 notes = "This should remove anything that matches CCDDDD-D-CC"
+phi_type = "ID"
 keyword = "mrn_id.CCDDDD-D-CC"
 
 [[filters]]
@@ -1684,6 +1742,7 @@ title = "DDCCCDDD"
 type = "regex"
 exclude = true
 notes = "This should remove anything that matches DDCCCDDD"
+phi_type = "ID"
 keyword = "mrn_id.DDCCCDDD"
 
 [[filters]]
@@ -1691,6 +1750,7 @@ title = "CCDDD_DDD"
 type = "regex"
 exclude = true
 notes = "This should remove anything that matches NNDDD(anything)DDDD"
+phi_type = "ID"
 keyword = "mrn_id.CCDDD_DDD"
 
 [[filters]]
@@ -1698,6 +1758,7 @@ title = "DDDD_DDDD-DD"
 type = "regex"
 exclude = true
 notes = ""
+phi_type = "ID"
 keyword = "mrn_id.DDDD_DDDD-DD"
 
 [[filters]]
@@ -1705,6 +1766,7 @@ title = "DDDD_DDD"
 type = "regex"
 exclude = true
 notes = "This should remove anything that matches DDDD-DDD"
+phi_type = "ID"
 keyword = "mrn_id.DDDD_DDD"
 
 [[filters]]
@@ -1712,6 +1774,7 @@ title = "CDD_DDDD+"
 type = "regex"
 exclude = true
 notes = "This should remove anything that matches NCDD_DDDD+"
+phi_type = "ID"
 keyword = "mrn_id.CDD_DDDD+"
 
 [[filters]]
@@ -1719,6 +1782,7 @@ title = "mixed 2"
 type = "regex"
 exclude = true
 notes = "This should remove anything that matches NND"
+phi_type = "ID"
 keyword = "mrn_id.mixed002"
 
 [[filters]]
@@ -1726,6 +1790,7 @@ title = "mixed 3"
 type = "regex"
 exclude = true
 notes = "This should remove anything that matches DDDDNNN"
+phi_type = "ID"
 keyword = "mrn_id.mixed003"
 
 [[filters]]
@@ -1733,6 +1798,7 @@ title = "mixed 4"
 type = "regex"
 exclude = true
 notes = "This should remove anything that matches DDDN+"
+phi_type = "ID"
 keyword = "mrn_id.mixed004"
 
 [[filters]]
@@ -1740,6 +1806,7 @@ title = "mixed 5"
 type = "regex"
 exclude = true
 notes = "This should remove anything that matches CDC"
+phi_type = "ID"
 keyword = "mrn_id.mixed005"
 
 [[filters]]
@@ -1747,6 +1814,7 @@ title = "mixed 6"
 type = "regex"
 exclude = true
 notes = "This should remove anything that matches CDDDC"
+phi_type = "ID"
 keyword = "mrn_id.mixed006"
 
 [[filters]]
@@ -1754,6 +1822,7 @@ title = "mixed 7"
 type = "regex"
 exclude = true
 notes = "This should remove anything that matches a weird string of numbers/letters connected by colons etc"
+phi_type = "ID"
 keyword = "mrn_id.mixed007"
 
 [[filters]]
@@ -1761,6 +1830,7 @@ title = "mixed 8"
 type = "regex"
 exclude = true
 notes = "This should remove anything that matches a (longer) weird string of numbers/letters connected by colons etc"
+phi_type = "ID"
 keyword = "mrn_id.mixed008"
 
 [[filters]]
@@ -1768,6 +1838,7 @@ title = "mixed 10"
 type = "regex"
 exclude = true
 notes = "This should remove anything with weird number/letter mashups"
+phi_type = "ID"
 keyword = "mrn_id.mixed_010"
 
 [[filters]]
@@ -1775,6 +1846,7 @@ title = "CCCDDD"
 type = "regex"
 exclude = true
 notes = "This should remove anything that matches CCCDDD"
+phi_type = "ID"
 keyword = "mrn_id.CCCDDD"
 
 [[filters]]
@@ -1782,6 +1854,7 @@ title = "visit code"
 type = "regex"
 exclude = true
 notes = ""
+phi_type = "ID"
 keyword = "mrn_id.visit_code"
 
 [[filters]]
@@ -1789,6 +1862,7 @@ title = "DDDDCDDDDD"
 type = "regex"
 exclude = true
 notes = "This should remove anything that matches DDDDCDDDDD"
+phi_type = "ID"
 keyword = "mrn_id.DDDDCDDDDD"
 
 [[filters]]
@@ -1796,6 +1870,7 @@ title = "DDD-DD-DD"
 type = "regex"
 exclude = true
 notes = "This should remove anything that matches any number with pattern DDD-DD-DD"
+phi_type = "ID"
 keyword = "mrn_id.DDD-DD-DD"
 
 [[filters]]
@@ -1803,6 +1878,7 @@ title = "DD-DD-DD-DD"
 type = "regex"
 exclude = true
 notes = "This should remove anything that matches any numbers separated by 3 dashes"
+phi_type = "ID"
 keyword = "mrn_id.DD-DD-DD-DD"
 
 [[filters]]
@@ -1810,6 +1886,7 @@ title = "DD-DDDDDC"
 type = "regex"
 exclude = true
 notes = "This should remove anything that matches any number with DD-DDDDDC"
+phi_type = "ID"
 keyword = "mrn_id.DD-DDDDDC"
 
 [[filters]]
@@ -1817,6 +1894,7 @@ title = "DD-CDD-DDDD"
 type = "regex"
 exclude = true
 notes = ""
+phi_type = "ID"
 keyword = "mrn_id.DD-CDD-DDDD"
 
 [[filters]]
@@ -1824,6 +1902,7 @@ title = "****DC"
 type = "regex"
 exclude = true
 notes = "This should remove anything that matches any blocked MRN number with last digits"
+phi_type = "ID"
 keyword = "mrn_id.blocked_DC"
 
 [[filters]]
@@ -1831,6 +1910,7 @@ title = "model and serial numbers"
 type = "regex"
 exclude = true
 notes = "This should remove anything that matches a model or serial number pattern"
+phi_type = "ID"
 keyword = "mrn_id.model_and_serial"
 
 [[filters]]
@@ -1838,6 +1918,7 @@ title = "ssn only"
 type = "regex"
 exclude = true
 notes = "This should remove anything that matches XXX-XX-XXXX"
+phi_type = "ID"
 keyword = "mrn_id.ssn"
 
 [[filters]]
@@ -1845,6 +1926,7 @@ title = "file indicator"
 type = "regex"
 exclude = true
 notes = "This should remove anything that matches XXX-XX-XXXX"
+phi_type = "ID"
 keyword = "mrn_id.file_indicator"
 
 [[filters]]
@@ -1852,6 +1934,7 @@ title = "url"
 type = "regex"
 exclude = true
 notes = "This should remove anything that looks like a url"
+phi_type = "CONTACT"
 keyword = "contact.url"
 
 [[filters]]
@@ -1859,6 +1942,7 @@ title = "call #"
 type = "regex"
 exclude = true
 notes = "This should remove anything that matches call #: etc."
+phi_type = "CONTACT"
 keyword = "contact.call_#"
 
 [[filters]]
@@ -1866,6 +1950,7 @@ title = "emails"
 type = "regex"
 exclude = true
 notes = "This should remove anything that looks like an email"
+phi_type = "CONTACT"
 keyword = "contact.email"
 
 [[filters]]
@@ -1873,6 +1958,7 @@ title = "xxx_xxx_xxxx"
 type = "regex"
 exclude = true
 notes = "This should remove anything that xxx.xxx.xxxx"
+phi_type = "CONTACT"
 keyword = "contact.xxx_xxx_xxxx"
 
 [[filters]]
@@ -1880,6 +1966,7 @@ title = "xxx_xxx_CCCC"
 type = "regex"
 exclude = true
 notes = "This should remove anything that xxx.xxx.CCCC+"
+phi_type = "CONTACT"
 keyword = "contact.xxx_xxx_CCCC"
 
 [[filters]]
@@ -1887,6 +1974,7 @@ title = "5 digit pager"
 type = "regex"
 exclude = true
 notes = "This should remove anything that matches a pager number"
+phi_type = "CONTACT"
 keyword = "contact.pager"
 
 [[filters]]
@@ -1894,6 +1982,7 @@ title = "lived to x"
 type = "regex"
 exclude = true
 note = ""
+phi_type = "AGE"
 keyword = "age.lived_to_x"
 
 [[filters]]
@@ -1901,6 +1990,7 @@ title = "x years old"
 type = "regex"
 exclude = true
 note = ""
+phi_type = "AGE"
 keyword = "age.x_years_old"
 
 [[filters]]
@@ -1908,6 +1998,7 @@ title = "x year old"
 type = "regex"
 exclude = true
 note = ""
+phi_type = "AGE"
 keyword = "age.x_year_old"
 
 [[filters]]
@@ -1915,6 +2006,7 @@ title = "age x"
 type = "regex"
 exclude = true
 note = ""
+phi_type = "AGE"
 keyword = "age.age_x"
 
 [[filters]]
@@ -1922,6 +2014,7 @@ title = "x yo"
 type = "regex"
 exclude = true
 note = ""
+phi_type = "AGE"
 keyword = "age.x_yo"
 
 [[filters]]
@@ -1929,6 +2022,7 @@ title = "confirmed by name"
 type = "regex"
 exclude = true
 note = ""
+phi_type = "NAME"
 keyword = "salutations.confirmed_by_name"
 
 [[filters]]
@@ -1936,6 +2030,7 @@ title = "editor name"
 type = "regex"
 exclude = true
 note = ""
+phi_type = "NAME"
 keyword = "salutations.editor_name"
 
 [[filters]]
@@ -1943,6 +2038,7 @@ title = "code status name"
 type = "regex"
 exclude = true
 note = ""
+phi_type = "NAME"
 keyword = "salutations.code_status_name"
 
 [[filters]]
@@ -1950,6 +2046,7 @@ title = "attending"
 type = "regex"
 exclude = true
 note = ""
+phi_type = "NAME"
 keyword = "salutations.attending"
 
 [[filters]]
@@ -1957,6 +2054,7 @@ title = "u_#_patient"
 type = "regex"
 exclude = true
 note = ""
+phi_type = "NAME"
 keyword = "salutations.u_#_patient"
 
 [[filters]]
@@ -1964,6 +2062,7 @@ title = "patient mrn"
 type = "regex"
 exclude = true
 note = ""
+phi_type = "NAME"
 keyword = "salutations.patient_mrn"
 
 [[filters]]
@@ -1971,6 +2070,7 @@ title = "name_age"
 type = "regex"
 exclude = true
 note = ""
+phi_type = "NAME"
 keyword = "salutations.name_age"
 
 [[filters]]
@@ -1978,6 +2078,7 @@ title = "patient/provider"
 type = "regex"
 exclude = true
 note = ""
+phi_type = "NAME"
 keyword = "salutations.patient_provider"
 
 [[filters]]
@@ -1985,6 +2086,7 @@ title = "patient summary"
 type = "regex"
 exclude = true
 note = ""
+phi_type = "NAME"
 keyword = "salutations.patient_summary"
 
 [[filters]]
@@ -1992,6 +2094,7 @@ title = "wrote"
 type = "regex"
 exclude = true
 note = ""
+phi_type = "NAME"
 keyword = "salutations.wrote"
 
 [[filters]]
@@ -1999,6 +2102,7 @@ title = "salutations1"
 type = "regex"
 exclude = true
 note = ""
+phi_type = "NAME"
 keyword = "salutations.pre_salutations_2chars"
 
 [[filters]]
@@ -2006,6 +2110,7 @@ title = "salutations2"
 type = "regex"
 exclude = true
 note = ""
+phi_type = "NAME"
 keyword = "salutations.pre_salutations_3chars"
 
 [[filters]]
@@ -2013,6 +2118,7 @@ title = "salutations3"
 type = "regex"
 exclude = true
 note = ""
+phi_type = "NAME"
 keyword = "salutations.pre_salutations_4chars"
 
 [[filters]]
@@ -2020,6 +2126,7 @@ title = "salutations4"
 type = "regex"
 exclude = true
 note = ""
+phi_type = "NAME"
 keyword = "salutations.pre_salutations_5chars"
 
 [[filters]]
@@ -2027,6 +2134,7 @@ title = "Md PhD"
 type = "regex"
 exclude = true
 note = ""
+phi_type = "NAME"
 keyword = "salutations.md_phd"
 
 [[filters]]
@@ -2034,6 +2142,7 @@ title = "salutations5"
 type = "regex"
 exclude = true
 note = ""
+phi_type = "NAME"
 keyword = "salutations.post_salutations_2chars"
 
 [[filters]]
@@ -2041,6 +2150,7 @@ title = "salutations6"
 type = "regex"
 exclude = true
 note = ""
+phi_type = "NAME"
 keyword = "salutations.post_salutations_3chars"
 
 [[filters]]
@@ -2048,6 +2158,7 @@ title = "salutations7"
 type = "regex"
 exclude = true
 note = ""
+phi_type = "NAME"
 keyword = "salutations.post_salutations_4chars"
 
 [[filters]]
@@ -2055,6 +2166,7 @@ title = "names patterns"
 type = "regex"
 exclude = true
 note = ""
+phi_type = "NAME"
 keyword = "salutations.name_patterns"
 
 [[filters]]
@@ -2062,6 +2174,7 @@ title = "ordering md"
 type = "regex"
 exclude = true
 note = ""
+phi_type = "NAME"
 keyword = "salutations.ordering_md"
 
 [[filters]]
@@ -2069,6 +2182,7 @@ title = "name indicator"
 type = "regex"
 exclude = true
 note = ""
+phi_type = "NAME"
 keyword = "salutations.name_indicator"
 
 [[filters]]
@@ -2076,6 +2190,7 @@ title = "relative indicator"
 type = "regex"
 exclude = true
 note = ""
+phi_type = "NAME"
 keyword = "salutations.relative_indicator"
 
 [[filters]]
@@ -2083,6 +2198,7 @@ title = "dr ambiguous"
 type = "regex"
 exclude = true
 note = ""
+phi_type = "NAME"
 keyword = "salutations.dr_ambiguous"
 
 [[filters]]
@@ -2090,6 +2206,7 @@ title = "dash doctor"
 type = "regex"
 exclude = true
 note = "________doctor name"
+phi_type = "NAME"
 keyword = "salutations.dash_doctor"
 
 [[filters]]
@@ -2097,6 +2214,7 @@ title = "patient present"
 type = "regex"
 exclude = true
 note = ""
+phi_type = "NAME"
 keyword = "salutations.patient_present"
 
 [[filters]]
@@ -2104,6 +2222,7 @@ title = "patient measurements"
 type = "regex"
 exclude = true
 note = ""
+phi_type = "NAME"
 keyword = "salutations.patient_measurements"
 
 [[filters]]
@@ -2111,6 +2230,7 @@ title = "patholigist"
 type = "regex"
 exclude = true
 note = ""
+phi_type = "NAME"
 keyword = "salutations.pathologist"
 
 [[filters]]
@@ -2118,6 +2238,7 @@ title = "email header"
 type = "regex"
 exclude = true
 note = ""
+phi_type = "NAME"
 keyword = "salutations.email_header"
 
 [[filters]]
@@ -2125,6 +2246,7 @@ title = "by doctor number"
 type = "regex"
 exclude = true
 note = ""
+phi_type = "NAME"
 keyword = "salutations.by_doctor_number"
 
 [[filters]]
@@ -2132,6 +2254,7 @@ title = "sent note to"
 type = "regex"
 exclude = true
 note = ""
+phi_type = "NAME"
 keyword = "salutations.sent_note_to"
 
 [[filters]]
@@ -2139,6 +2262,7 @@ title = "sincerely"
 type = "regex"
 exclude = true
 note = ""
+phi_type = "NAME"
 keyword = "salutations.sincerely"
 
 [[filters]]
@@ -2146,6 +2270,7 @@ title = "ucsf SF"
 type = "regex"
 exclude = true
 note = ""
+phi_type = "LOCATION"
 keyword = "ucsf_regex.ucsf_sf"
 
 [[filters]]
@@ -2153,6 +2278,7 @@ title = "ucsf bay area"
 type = "regex"
 exclude = true
 note = ""
+phi_type = "LOCATION"
 keyword = "ucsf_regex.ucsf_bay_area"
 
 [[filters]]
@@ -2160,6 +2286,7 @@ title = "ucsf neighborhoods"
 type = "regex"
 exclude = true
 note = ""
+phi_type = "LOCATION"
 keyword = "ucsf_regex.ucsf_neighborhoods"
 
 [[filters]]
@@ -2176,6 +2303,7 @@ type = "set"
 exclude = true
 pos = [ "NNP",]
 notes = "These are words we believe are not safe"
+phi_type = "NAME"
 keyword = "firstnames"
 
 [[filters]]
@@ -2184,6 +2312,7 @@ type = "set"
 exclude = true
 pos = [ "NNP",]
 notes = "These are words we believe are not safe"
+phi_type = "NAME"
 keyword = "lastnames"
 
 [[filters]]
@@ -2193,6 +2322,7 @@ exclude = true
 context = "right"
 context_filter = "Firstnames Blacklist"
 notes = ""
+phi_type = "NAME"
 keyword = "regex_context.names_regex_context1"
 
 [[filters]]
@@ -2202,6 +2332,7 @@ exclude = true
 context = "left"
 context_filter = "Firstnames Blacklist"
 notes = ""
+phi_type = "NAME"
 keyword = "regex_context.names_regex_context2"
 
 [[filters]]
@@ -2211,6 +2342,7 @@ exclude = true
 context = "left"
 context_filter = "Firstnames Blacklist"
 notes = ""
+phi_type = "NAME"
 keyword = "regex_context.names_regex_context3"
 
 [[filters]]
@@ -2220,6 +2352,7 @@ exclude = true
 context = "left"
 context_filter = "Firstnames Blacklist"
 notes = ""
+phi_type = "NAME"
 keyword = "regex_context.names_regex_context4"
 
 [[filters]]
@@ -2244,5 +2377,6 @@ exclude = true
 context = "left_or_right"
 context_filter = "all"
 notes = ""
+phi_type = "NAME"
 keyword = "regex_context.initials"
 
