@@ -98,7 +98,9 @@ def detect_phi(
                 pattern=pat,
             )
         elif pat.type == "pos_matcher" and isinstance(pat, PosFilter):
-            _map_parts_of_speech(pos_list=pos_list, coord_map=pattern_coord, pattern=pat)
+            _map_parts_of_speech(
+                pos_list=pos_list, coord_map=pattern_coord, pattern=pat
+            )
         elif pat.type == "match_all":
             _match_all(text=text_data, coord_map=pattern_coord)
         else:
@@ -154,7 +156,10 @@ def _get_clean(text, pre_process=REGEX_NON_ALPHANUM_CHAR):
 
 
 def _map_regex(
-    text, pattern: RegexFilter, coord_map: CoordinateMap, pre_process=REGEX_NON_ALPHANUM_CHAR
+    text,
+    pattern: RegexFilter,
+    coord_map: CoordinateMap,
+    pre_process=REGEX_NON_ALPHANUM_CHAR,
 ) -> CoordinateMap:
     """Creates a coordinate map from the pattern on this data
     generating a coordinate map of hits given (dry run doesn't transform)
