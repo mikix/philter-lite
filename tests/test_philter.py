@@ -61,7 +61,7 @@ def test_filter_from_dict():
     assert filter.title == "Whitelist 1"
     assert filter.data is not None
     assert filter.exclude is False
-    assert filter.pos == []
+    assert filter.pos == set()
     assert isinstance(filter, filters.SetFilter)
 
     filter_dict = {

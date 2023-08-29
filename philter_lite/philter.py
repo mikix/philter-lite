@@ -19,6 +19,11 @@ DEFAULT_PHI_TYPE_LIST = [
     "OTHER",
 ]
 
+REGEX_NON_ALPHANUM_CHAR = re.compile(r"[^a-zA-Z0-9]")
+REGEX_NON_ALPHANUM_GROUP = re.compile(r"[^a-zA-Z0-9]+")
+REGEX_WHITESPACES = re.compile(r"(\s+)")
+REGEX_ALL = re.compile(".")
+
 
 @dataclass(frozen=True)
 class PhiEntry:
@@ -74,6 +79,8 @@ def detect_phi(
     # Also add "OTHER" type for filters that aren't appropriately labeled
     phi_type_dict["OTHER"] = CoordinateMap()
 
+    pos_list = _get_pos(text_data)
+
     # Create inital self.exclude/include for file
     for i, pat in enumerate(patterns):
         pattern_coord = pattern_coords[pat.title]
@@ -81,7 +88,7 @@ def detect_phi(
         if pat.type == "regex" and isinstance(pat, RegexFilter):
             _map_regex(text=text_data, coord_map=pattern_coord, pattern=pat)
         elif pat.type == "set" and isinstance(pat, SetFilter):
-            _map_set(text=text_data, coord_map=pattern_coord, pattern=pat)
+            _map_set(pos_list=pos_list, coord_map=pattern_coord, pattern=pat)
         elif pat.type == "regex_context" and isinstance(pat, RegexContextFilter):
             _map_regex_context(
                 text=text_data,
@@ -91,7 +98,7 @@ def detect_phi(
                 pattern=pat,
             )
         elif pat.type == "pos_matcher" and isinstance(pat, PosFilter):
-            _map_parts_of_speech(text=text_data, coord_map=pattern_coord, pattern=pat)
+            _map_parts_of_speech(pos_list=pos_list, coord_map=pattern_coord, pattern=pat)
         elif pat.type == "match_all":
             _match_all(text=text_data, coord_map=pattern_coord)
         else:
@@ -125,18 +132,19 @@ def detect_phi(
     return include_map, exclude_map, data_tracker
 
 
-def _get_pos(cleaned):
+def _get_pos(text):
+    cleaned = _get_clean(text)
     return nltk.pos_tag(cleaned)
 
 
-def _get_clean(text, pre_process=r"[^a-zA-Z0-9]"):
+def _get_clean(text, pre_process=REGEX_NON_ALPHANUM_CHAR):
     # Use pre-process to split sentence by spaces AND symbols, while preserving spaces in the split list
-    lst = re.split(r"(\s+)", text)
+    lst = REGEX_WHITESPACES.split(text)
     cleaned = []
     for item in lst:
         if len(item) > 0:
             if not item.isspace():
-                split_item = re.split(r"(\s+)", re.sub(pre_process, " ", item))
+                split_item = REGEX_WHITESPACES.split(pre_process.sub(" ", item))
                 for elem in split_item:
                     if len(elem) > 0:
                         cleaned.append(elem)
@@ -146,7 +154,7 @@ def _get_clean(text, pre_process=r"[^a-zA-Z0-9]"):
 
 
 def _map_regex(
-    text, pattern: RegexFilter, coord_map: CoordinateMap, pre_process=r"[^a-zA-Z0-9]"
+    text, pattern: RegexFilter, coord_map: CoordinateMap, pre_process=REGEX_NON_ALPHANUM_CHAR
 ) -> CoordinateMap:
     """Creates a coordinate map from the pattern on this data
     generating a coordinate map of hits given (dry run doesn't transform)
@@ -154,7 +162,7 @@ def _map_regex(
     regex = pattern.data
 
     # All regexes except matchall
-    if regex != re.compile("."):
+    if regex != REGEX_ALL:
         matches = regex.finditer(text)
 
         for m in matches:
@@ -165,12 +173,12 @@ def _map_regex(
     # MATCHALL/CATCHALL
     else:
         # Split note the same way we would split for set or POS matching
-        matchall_list = re.split(r"(\s+)", text)
+        matchall_list = REGEX_WHITESPACES.split(text)
         matchall_list_cleaned = []
         for item in matchall_list:
             if len(item) > 0:
                 if not item.isspace():
-                    split_item = re.split(r"(\s+)", re.sub(pre_process, " ", item))
+                    split_item = REGEX_WHITESPACES.split(pre_process.sub(" ", item))
                     for elem in split_item:
                         if len(elem) > 0:
                             matchall_list_cleaned.append(elem)
@@ -181,7 +189,7 @@ def _map_regex(
         for word in matchall_list_cleaned:
             start = start_coordinate
             stop = start_coordinate + len(word)
-            word_clean = re.sub(r"[^a-zA-Z0-9]+", "", word.lower().strip())
+            word_clean = REGEX_NON_ALPHANUM_GROUP.sub("", word.lower().strip())
             if len(word_clean) == 0:
                 # got a blank space or something without any characters or digits, move forward
                 start_coordinate += len(word)
@@ -202,7 +210,7 @@ def _map_regex_context(
     coord_map: CoordinateMap,
     all_patterns: Dict[str, CoordinateMap],
     include_map: CoordinateMap,
-    pre_process=r"[^a-zA-Z0-9]",
+    pre_process=REGEX_NON_ALPHANUM_CHAR,
 ) -> CoordinateMap:
     """map_regex_context creates a coordinate map from combined regex + PHI coordinates
     of all previously mapped patterns
@@ -261,7 +269,7 @@ def _map_regex_context(
         # Get index of m.group()first alphanumeric character in match
         tokenized_matches = []
         match_text = m.group()
-        split_match = re.split(r"(\s+)", re.sub(pre_process, " ", match_text))
+        split_match = REGEX_WHITESPACES.split(pre_process.sub(" ", match_text))
 
         # Get all spans of tokenized match (because remove() function requires tokenized start coordinates)
         coord_tracker = 0
@@ -296,7 +304,7 @@ def _match_all(text, coord_map: CoordinateMap) -> CoordinateMap:
     return coord_map
 
 
-def _map_set(text, coord_map: CoordinateMap, pattern: SetFilter) -> CoordinateMap:
+def _map_set(pos_list, coord_map: CoordinateMap, pattern: SetFilter) -> CoordinateMap:
     """Creates a coordinate mapping of words any words in this set"""
 
     set_data = pattern.data
@@ -304,12 +312,9 @@ def _map_set(text, coord_map: CoordinateMap, pattern: SetFilter) -> CoordinateMa
     # get part of speech we will be sending through this set
     # note, if this is empty we will put all parts of speech through the set
     check_pos = False
-    pos_set = set(pattern.pos)
+    pos_set = pattern.pos
     if len(pos_set) > 0:
         check_pos = True
-
-    cleaned = _get_clean(text)
-    pos_list = nltk.pos_tag(cleaned)
 
     start_coordinate = 0
     for tup in pos_list:
@@ -319,26 +324,24 @@ def _map_set(text, coord_map: CoordinateMap, pattern: SetFilter) -> CoordinateMa
         stop = start_coordinate + len(word)
 
         # This converts spaces into empty strings, so we know to skip forward to the next real word
-        word_clean = re.sub(r"[^a-zA-Z0-9]+", "", word.lower().strip())
+        word_clean = REGEX_NON_ALPHANUM_GROUP.sub("", word.lower().strip())
         if len(word_clean) == 0:
             # got a blank space or something without any characters or digits, move forward
-            start_coordinate += len(word)
+            start_coordinate = stop
             continue
 
         if not check_pos or (check_pos and pos in pos_set):
             if word_clean in set_data or word in set_data:
                 coord_map.add_extend(start, stop)
-            else:
-                pass
 
         # advance our start coordinate
-        start_coordinate += len(word)
+        start_coordinate = stop
 
     return coord_map
 
 
 def _map_parts_of_speech(
-    text, pattern: PosFilter, coord_map: CoordinateMap
+    pos_list, pattern: PosFilter, coord_map: CoordinateMap
 ) -> CoordinateMap:
     """Creates a coordinate mapping of words which match this part of speech (POS)"""
 
@@ -346,16 +349,13 @@ def _map_parts_of_speech(
 
     # Use pre-process to split sentence by spaces AND symbols, while preserving spaces in the split list
 
-    cleaned = _get_clean(text)
-
-    pos_list = _get_pos(cleaned)  # pos_list = nltk.pos_tag(cleaned)
     start_coordinate = 0
     for tup in pos_list:
         word = tup[0]
         pos = tup[1]
         start = start_coordinate
         stop = start_coordinate + len(word)
-        word_clean = re.sub(r"[^a-zA-Z0-9]+", "", word.lower().strip())
+        word_clean = REGEX_NON_ALPHANUM_GROUP.sub("", word.lower().strip())
         if len(word_clean) == 0:
             # got a blank space or something without any characters or digits, move forward
             start_coordinate += len(word)

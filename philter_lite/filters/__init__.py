@@ -2,7 +2,7 @@ import os
 import re
 import warnings
 from dataclasses import dataclass
-from typing import List, Optional, Pattern
+from typing import List, Optional, Pattern, Set
 
 import toml
 
@@ -19,8 +19,8 @@ class Filter:
 
 @dataclass(frozen=True)
 class SetFilter(Filter):
-    pos: List[str]
-    data: List[str]
+    pos: Set[str]
+    data: Set[str]
 
 
 @dataclass(frozen=True)
@@ -81,8 +81,8 @@ def filter_from_dict(
             title=filter_dict["title"],
             type=filter_type,
             exclude=filter_dict["exclude"],
-            data=data,
-            pos=filter_dict["pos"],
+            data=set(data),
+            pos=set(filter_dict["pos"]),
             phi_type=filter_dict.get("phi_type", "OTHER"),
         )
     elif filter_type == "regex":
